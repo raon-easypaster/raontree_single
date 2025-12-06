@@ -78,14 +78,17 @@
                 <button onclick="filterMenu('all')" class="filter-btn active px-4 py-2 rounded-full text-sm font-bold bg-stone-800 text-white whitespace-nowrap transition-all shadow-md">
                     전체보기
                 </button>
-                <button onclick="filterMenu('special')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
-                    ✨ 스페셜/게샤
-                </button>
                 <button onclick="filterMenu('daily')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
                     ☕ 데일리
                 </button>
                 <button onclick="filterMenu('decaf')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
                     🌿 디카페인
+                </button>
+                <button onclick="filterMenu('special')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
+                    ✨ 스페셜
+                </button>
+                <button onclick="filterMenu('gesha')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
+                    🏆 게샤
                 </button>
             </div>
         </nav>
@@ -124,31 +127,15 @@
     </footer>
 
     <script>
-        // --- 데이터 정의 ---
+        // --- 데이터 정의 (순서: 데일리 -> 디카페인 -> 스페셜 -> 게샤) ---
         const menuData = [
-            // 1. BLEND (Top Priority)
+            // 1. DAILY (Blend & Others)
             {
                 id: 'blend_purple', category: 'daily', country: 'Blend',
                 name: '라온트리 블랜드 퍼플', 
                 note: '과테말라, 에티오피아, 콜롬비아, 브라질 블렌딩',
                 priceDrip: 3300, priceBean: 5000, tags: ['House Blend']
             },
-
-            // 2. DECAF (Second Priority)
-            {
-                id: 'decaf_sidamo', category: 'decaf', country: 'Ethiopia',
-                name: '에티오피아 시다모 디카페인 N', 
-                note: '민트, 보리, 레몬그라스, 오렌지, 포도',
-                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
-            },
-            {
-                id: 'decaf_brazil', category: 'decaf', country: 'Brazil',
-                name: '브라질 NY2 게르만 CO2 (Decaf)', 
-                note: '초콜릿, 부드러움, 균형감',
-                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
-            },
-
-            // 3. DARK / SAVORY (Moved here after Decaf)
             {
                 id: 'colombia_popayan', category: 'daily', country: 'Colombia',
                 name: '콜롬비아 포파얀 클라쎄 (Dark)', 
@@ -166,64 +153,6 @@
                 name: '코스타리카 산호세 따라주 SHB (Dark)', 
                 note: '만다린, 비스킷, 시리얼, 볶은 아몬드, 메이플시럽',
                 priceDrip: 5000, priceBean: 10000, tags: ['Dark']
-            },
-
-            // 4. SPECIAL / GESHA
-            {
-                id: 'panama_mascarada', category: 'special', country: 'Panama',
-                name: '파나마 마스카라다 라 플루', 
-                note: '쟈스민, 흰 꽃향기, 청사과, 버터 스카치',
-                priceDrip: 10000, priceBean: 25000, tags: ['New', 'Special']
-            },
-            {
-                id: 'panama_esmeralda', category: 'special', country: 'Panama',
-                name: '파나마 에스메랄다 게샤 W', 
-                note: '쟈스민, 베르가못, 레몬, 꿀(조청), 우아함',
-                priceDrip: 12000, priceBean: 35000, tags: ['Best', 'Premium']
-            },
-            {
-                id: 'colombia_melon', category: 'special', country: 'Colombia',
-                name: '콜롬비아 안티오키아 엘 푸투로 메론 무산소 H', 
-                note: '멜론, 수박바, 딸기 아이스크림, 사과쥬스, 치즈케이크',
-                priceDrip: 7000, priceBean: 15000, tags: ['Funky']
-            },
-            {
-                id: 'colombia_gesha_n', category: 'special', country: 'Colombia',
-                name: '콜롬비아 부에사코 나리노 로스 앙헬레스 게샤 N', 
-                note: '라벤더, 포도, 블랙베리, 레몬그라스, 사탕수수',
-                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
-            },
-            {
-                id: 'colombia_pink_lactic', category: 'special', country: 'Colombia',
-                name: '콜롬비아 산 아돌포 엘 디비소 핑크버번 락틱 W', 
-                note: '딸기, 카라멜, 붉은 과일류, 라벤더, 사과, 고추씨',
-                priceDrip: 8000, priceBean: 20000, tags: ['Pink Bourbon']
-            },
-            {
-                id: 'guatemala_gesha_anaerobic', category: 'special', country: 'Guatemala',
-                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 무산소 W', 
-                note: '포도, 스톤프룻, 홍차, 카라멜, 자스민',
-                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
-            },
-            {
-                id: 'guatemala_gesha_honey', category: 'special', country: 'Guatemala',
-                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 H', 
-                note: '흑설탕, 라임, 홍차, 바닐라, 자스민',
-                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
-            },
-            {
-                id: 'peru_gesha', category: 'special', country: 'Peru',
-                name: '페루 라 팔레스티나 게샤 W', 
-                note: '살구, 만다린, 얼그레이, 깔끔함',
-                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
-            },
-
-            // 5. REMAINING DAILY / OTHERS
-            {
-                id: 'ethiopia_guji_anaerobic', category: 'special', country: 'Ethiopia',
-                name: '에티오피아 오로미아 서 구지 게샤 무산소 W', 
-                note: '계피, 레드베리, 백포도, 블랙커런트, 젤리',
-                priceDrip: 5500, priceBean: 12000, tags: ['Anaerobic']
             },
             {
                 id: 'ethiopia_guji_natural', category: 'daily', country: 'Ethiopia',
@@ -284,7 +213,79 @@
                 name: '케냐 무가가 키에니 AA TOP W', 
                 note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미',
                 priceDrip: 5500, priceBean: 13000, tags: ['Kenya']
-            }
+            },
+
+            // 2. DECAF
+            {
+                id: 'decaf_sidamo', category: 'decaf', country: 'Ethiopia',
+                name: '에티오피아 시다모 디카페인 N', 
+                note: '민트, 보리, 레몬그라스, 오렌지, 포도',
+                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
+            },
+            {
+                id: 'decaf_brazil', category: 'decaf', country: 'Brazil',
+                name: '브라질 NY2 게르만 CO2 (Decaf)', 
+                note: '초콜릿, 부드러움, 균형감',
+                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
+            },
+
+            // 3. SPECIAL (Non-Gesha Special Items)
+            {
+                id: 'panama_mascarada', category: 'special', country: 'Panama',
+                name: '파나마 마스카라다 라 플루', 
+                note: '쟈스민, 흰 꽃향기, 청사과, 버터 스카치',
+                priceDrip: 10000, priceBean: 25000, tags: ['New', 'Special']
+            },
+            {
+                id: 'colombia_melon', category: 'special', country: 'Colombia',
+                name: '콜롬비아 안티오키아 엘 푸투로 메론 무산소 H', 
+                note: '멜론, 수박바, 딸기 아이스크림, 사과쥬스, 치즈케이크',
+                priceDrip: 7000, priceBean: 15000, tags: ['Funky']
+            },
+            {
+                id: 'colombia_pink_lactic', category: 'special', country: 'Colombia',
+                name: '콜롬비아 산 아돌포 엘 디비소 핑크버번 락틱 W', 
+                note: '딸기, 카라멜, 붉은 과일류, 라벤더, 사과, 고추씨',
+                priceDrip: 8000, priceBean: 20000, tags: ['Pink Bourbon']
+            },
+            {
+                id: 'ethiopia_guji_anaerobic', category: 'special', country: 'Ethiopia',
+                name: '에티오피아 오로미아 서 구지 게샤 무산소 W', 
+                note: '계피, 레드베리, 백포도, 블랙커런트, 젤리',
+                priceDrip: 5500, priceBean: 12000, tags: ['Anaerobic']
+            },
+
+            // 4. GESHA
+            {
+                id: 'panama_esmeralda', category: 'gesha', country: 'Panama',
+                name: '파나마 에스메랄다 게샤 W', 
+                note: '쟈스민, 베르가못, 레몬, 꿀(조청), 우아함',
+                priceDrip: 12000, priceBean: 35000, tags: ['Best', 'Premium']
+            },
+            {
+                id: 'colombia_gesha_n', category: 'gesha', country: 'Colombia',
+                name: '콜롬비아 부에사코 나리노 로스 앙헬레스 게샤 N', 
+                note: '라벤더, 포도, 블랙베리, 레몬그라스, 사탕수수',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'guatemala_gesha_anaerobic', category: 'gesha', country: 'Guatemala',
+                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 무산소 W', 
+                note: '포도, 스톤프룻, 홍차, 카라멜, 자스민',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'guatemala_gesha_honey', category: 'gesha', country: 'Guatemala',
+                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 H', 
+                note: '흑설탕, 라임, 홍차, 바닐라, 자스민',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'peru_gesha', category: 'gesha', country: 'Peru',
+                name: '페루 라 팔레스티나 게샤 W', 
+                note: '살구, 만다린, 얼그레이, 깔끔함',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
         ];
 
         // --- 국가별 정보 (색상 및 국기 이미지) ---
@@ -336,7 +337,7 @@
         let isAdminMode = false;
 
         // 로컬 스토리지에서 품절 상태 불러오기
-        let soldOutItems = JSON.parse(localStorage.getItem('raontree_soldout_v5')) || [];
+        let soldOutItems = JSON.parse(localStorage.getItem('raontree_soldout_v6')) || [];
 
         function formatPrice(price) {
             return price.toLocaleString();
@@ -376,7 +377,7 @@
             } else {
                 soldOutItems.push(id);
             }
-            localStorage.setItem('raontree_soldout_v5', JSON.stringify(soldOutItems));
+            localStorage.setItem('raontree_soldout_v6', JSON.stringify(soldOutItems));
             renderMenu(currentCategory);
         }
 
@@ -398,9 +399,10 @@
                 }
             });
 
+            // 필터링 로직 업데이트 (Daily, Decaf, Special, Gesha)
             const filteredData = filterCategory === 'all' 
                 ? menuData 
-                : menuData.filter(item => item.category === filterCategory || (filterCategory === 'daily' && item.category === 'blend'));
+                : menuData.filter(item => item.category === filterCategory);
 
             filteredData.forEach(item => {
                 const isSoldOut = soldOutItems.includes(item.id);
