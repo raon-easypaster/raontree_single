@@ -1,526 +1,488 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.2">
-  <style type="text/css">
-    body {background-color: #fcfaf5}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #4689cc; -webkit-text-stroke: #4689cc}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #8cd3fe; -webkit-text-stroke: #8cd3fe}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #c27e65; -webkit-text-stroke: #c27e65}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #cacaca; -webkit-text-stroke: #cacaca}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #cacaca; -webkit-text-stroke: #cacaca; min-height: 16.0px}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6d7378; -webkit-text-stroke: #6d7378}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #71c083; -webkit-text-stroke: #71c083}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #71c083; -webkit-text-stroke: #71c083; min-height: 16.0px}
-    span.s1 {font-kerning: none; background-color: #171818}
-    span.s2 {font-kerning: none; color: #8cd3fe; background-color: #171818; -webkit-text-stroke: 0px #8cd3fe}
-    span.s3 {font-kerning: none; color: #6d6d6d; background-color: #171818; -webkit-text-stroke: 0px #6d6d6d}
-    span.s4 {font-kerning: none; color: #cacaca; background-color: #171818; -webkit-text-stroke: 0px #cacaca}
-    span.s5 {font-kerning: none; color: #c27e65; background-color: #171818; -webkit-text-stroke: 0px #c27e65}
-    span.s6 {font-kerning: none; color: #4689cc; background-color: #171818; -webkit-text-stroke: 0px #4689cc}
-    span.s7 {font-kerning: none}
-    span.s8 {font-kerning: none; color: #d4d4d4; background-color: #171818; -webkit-text-stroke: 0px #d4d4d4}
-    span.s9 {font-kerning: none; color: #71c083; background-color: #171818; -webkit-text-stroke: 0px #71c083}
-    span.s10 {font-kerning: none; color: #a7c598; background-color: #171818; -webkit-text-stroke: 0px #a7c598}
-    span.s11 {font-kerning: none; color: #b76ff7; background-color: #171818; -webkit-text-stroke: 0px #b76ff7}
-    span.s12 {font-kerning: none; color: #f67c30; background-color: #171818; -webkit-text-stroke: 0px #f67c30}
-    span.s13 {font-kerning: none; color: #6d7378; background-color: #171818; -webkit-text-stroke: 0px #6d7378}
-    span.s14 {font-kerning: none; color: #36c0a0; background-color: #171818; -webkit-text-stroke: 0px #36c0a0}
-    span.s15 {font-kerning: none; color: #a34f83; background-color: #171818; -webkit-text-stroke: 0px #a34f83}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라온트리 - Single Origin Menu</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 폰트: 고운 돋움 -->
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    
+    <!-- 아이콘 (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Gowun Dodum', sans-serif;
+            background-color: #fdfbf7;
+            color: #44403c;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .sold-out {
+            opacity: 0.5;
+            position: relative;
+            filter: grayscale(100%);
+        }
+        /* 관리자 모드가 아닐 때만 클릭 방지 */
+        body:not(.admin-mode) .sold-out {
+            pointer-events: none;
+        }
+        .sold-out::after {
+            content: 'SOLD OUT';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            background-color: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+    </style>
 </head>
-<body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;</span><span class="s1">html</span><span class="s4"> </span><span class="s2">lang</span><span class="s3">=</span><span class="s5">"ko"</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s5">"UTF-8"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s2">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s4"> </span><span class="s2">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">title</span><span class="s3">&gt;</span><span class="s1">라온트리 - Single Origin Menu</span><span class="s3">&lt;/</span><span class="s6">title</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- Tailwind CSS --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.tailwindcss.com"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 폰트: 고운 돋움 --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">link</span><span class="s4"> </span><span class="s2">href</span><span class="s3">=</span><span class="s1">"https://fonts.googleapis.com/css2?family=Gowun+Dodum&amp;display=swap"</span><span class="s4"> </span><span class="s2">rel</span><span class="s3">=</span><span class="s1">"stylesheet"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 아이콘 (Lucide) --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://unpkg.com/lucide@latest"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">body</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s9">'Gowun Dodum'</span><span class="s8">,</span><span class="s1"> </span><span class="s5">sans-serif</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">background-color:</span><span class="s1"> #fdfbf7</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> #44403c</span><span class="s8">;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">-webkit-tap-highlight-color:</span><span class="s4"> </span><span class="s5">transparent</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.hide-scrollbar::-webkit-scrollbar</span><span class="s4"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">display:</span><span class="s1"> </span><span class="s5">none</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.hide-scrollbar</span><span class="s4"> </span><span class="s8">{</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">-ms-overflow-style:</span><span class="s4"> </span><span class="s5">none</span><span class="s8">;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">scrollbar-width:</span><span class="s4"> </span><span class="s5">none</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.sold-out</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">opacity:</span><span class="s1"> </span><span class="s10">0.5</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s5">relative</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">filter:</span><span class="s1"> </span><span class="s5">grayscale(</span><span class="s10">100%</span><span class="s5">)</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 관리자 모드가 아닐 때만 클릭 방지 */</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">body:not</span><span class="s4">(</span><span class="s1">.admin-mode</span><span class="s4">) </span><span class="s1">.sold-out</span><span class="s4"> </span><span class="s8">{</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">pointer-events:</span><span class="s4"> </span><span class="s5">none</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.sold-out::after</span><span class="s4"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">content:</span><span class="s1"> </span><span class="s9">'SOLD OUT'</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s5">absolute</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">top:</span><span class="s1"> </span><span class="s10">50%</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">left:</span><span class="s1"> </span><span class="s10">50%</span><span class="s8">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">transform:</span><span class="s4"> </span><span class="s1">translate(</span><span class="s10">-50%</span><span class="s8">,</span><span class="s4"> </span><span class="s10">-50%</span><span class="s1">)</span><span class="s4"> </span><span class="s1">rotate(</span><span class="s10">-10deg</span><span class="s1">)</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">background-color:</span><span class="s1"> #ef4444</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s5">white</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">padding:</span><span class="s1"> </span><span class="s10">0.5rem</span><span class="s1"> </span><span class="s10">1rem</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-weight:</span><span class="s1"> </span><span class="s5">bold</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s10">1.2rem</span><span class="s8">;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">border-radius:</span><span class="s4"> </span><span class="s10">0.5rem</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">border:</span><span class="s1"> </span><span class="s10">2px</span><span class="s1"> </span><span class="s5">solid</span><span class="s1"> </span><span class="s5">white</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">box-shadow:</span><span class="s1"> </span><span class="s10">0</span><span class="s1"> </span><span class="s10">4px</span><span class="s1"> </span><span class="s10">6px</span><span class="s1"> </span><span class="s10">-1px</span><span class="s1"> </span><span class="s5">rgba(</span><span class="s10">0</span><span class="s8">,</span><span class="s1"> </span><span class="s10">0</span><span class="s8">,</span><span class="s1"> </span><span class="s10">0</span><span class="s8">,</span><span class="s1"> </span><span class="s10">0.1</span><span class="s5">)</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">z-index:</span><span class="s1"> </span><span class="s10">10</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s3">&lt;</span><span class="s6">body</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"min-h-screen relative pb-24"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- Header --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">header</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"sticky top-0 z-50 bg-[#fdfbf7]/95 backdrop-blur-sm border-b border-stone-200 shadow-sm transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"max-w-3xl mx-auto px-6 py-4 flex justify-between items-center"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"window.scrollTo({top: 0, behavior: 'smooth'})"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"cursor-pointer"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">h1</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"text-2xl font-bold text-stone-800 tracking-tight"</span><span class="s3">&gt;</span><span class="s4">Raon Tree</span><span class="s3">&lt;/</span><span class="s6">h1</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"text-xs text-stone-500"</span><span class="s3">&gt;</span><span class="s1">Specialty Single Origin</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"flex items-center space-x-2"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"toggleAdminMode()"</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"admin-btn"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"flex items-center px-3 py-1.5 rounded-full hover:bg-stone-100 transition text-stone-400 border border-transparent"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s6">i</span><span class="s1"> </span><span class="s2">data-lucide</span><span class="s3">=</span><span class="s5">"lock"</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"w-4 h-4"</span><span class="s3">&gt;&lt;/</span><span class="s6">i</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"ml-1 text-xs"</span><span class="s3">&gt;</span><span class="s1">관리</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- Category Filter --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">nav</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"max-w-3xl mx-auto px-4 pb-2"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"flex space-x-2 overflow-x-auto hide-scrollbar py-2"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"filterMenu('all')"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"filter-btn active px-4 py-2 rounded-full text-sm font-bold bg-stone-800 text-white whitespace-nowrap transition-all shadow-md"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>전체보기</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"filterMenu('special')"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>✨ 스페셜/게샤</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"filterMenu('daily')"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>☕ 데일리</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"filterMenu('decaf')"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>🌿 디카페인</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">nav</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">header</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- Main Content --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">main</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"max-w-3xl mx-auto px-4 py-6"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- Admin Notice --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"admin-notice"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"hidden mb-4 bg-stone-800 text-white px-4 py-3 rounded-lg text-sm flex justify-between items-center shadow-lg"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"flex items-center"</span><span class="s3">&gt;&lt;</span><span class="s6">i</span><span class="s1"> </span><span class="s2">data-lucide</span><span class="s3">=</span><span class="s5">"settings"</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"w-4 h-4 mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s6">i</span><span class="s3">&gt;</span><span class="s1"> 관리자 모드: 각 메뉴의 [품절] 버튼을 눌러 상태를 변경하세요.</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">button</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"toggleAdminMode()"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"text-xs bg-white text-stone-800 px-2 py-1 rounded font-bold"</span><span class="s3">&gt;</span><span class="s4">종료</span><span class="s3">&lt;/</span><span class="s6">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"menu-grid"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"grid grid-cols-1 md:grid-cols-2 gap-4"</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">&lt;!-- JS Generated Content --&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- Price Guide --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"mt-8 bg-stone-100 rounded-xl p-6 text-sm text-stone-600 leading-relaxed shadow-inner"</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">h3</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"font-bold text-stone-800 mb-2 text-base flex items-center"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">i</span><span class="s1"> </span><span class="s2">data-lucide</span><span class="s3">=</span><span class="s5">"info"</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"w-4 h-4 mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s6">i</span><span class="s3">&gt;</span><span class="s1"> 이용 안내</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">h3</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">ul</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"space-y-2 list-disc list-inside text-xs sm:text-sm"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">모든 핸드드립은 </span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"font-bold text-stone-800"</span><span class="s3">&gt;</span><span class="s1">HOT / ICE 가격이 동일</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">합니다.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">원두 구매 시 </span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"font-bold text-stone-800"</span><span class="s3">&gt;</span><span class="s1">500g (20%), 1kg (30%) 할인</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1"> 적용됩니다.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">커피를 고르기 어려우시면 바리스타에게 편하게 문의해주세요.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">ul</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s6">main</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- Footer --&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">footer</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"text-center py-10 text-stone-400 text-xs"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"mb-2"</span><span class="s3">&gt;</span><span class="s1">Raon Tree Roastery</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"text-[10px] opacity-70"</span><span class="s3">&gt;</span><span class="s1">Single Origin Line-up</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">footer</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">// --- 데이터 정의 ---</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> menuData </span><span class="s8">=</span><span class="s1"> </span><span class="s8">[</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 1. BLEND (Top Priority)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'blend_purple'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Blend'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'라온트리 블랜드 퍼플'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'과테말라, 에티오피아, 콜롬비아, 브라질 블렌딩'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">3300</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'House Blend'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 2. DECAF (Second Priority)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'decaf_sidamo'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'decaf'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 시다모 디카페인 N'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'민트, 보리, 레몬그라스, 오렌지, 포도'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">4300</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Decaf'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'decaf_brazil'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'decaf'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Brazil'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'브라질 NY2 게르만 CO2 (Decaf)'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'초콜릿, 부드러움, 균형감'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">4300</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Decaf'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 3. DARK / SAVORY (Moved here after Decaf)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'colombia_popayan'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Colombia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'콜롬비아 포파얀 클라쎄 (Dark)'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'카라멜, 아몬드, 밀크초콜릿, 브라운 슈가, 묵직함'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">10000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Dark'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'guatemala_waykan'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Guatemala'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'과테말라 우에우에케낭고 와이칸 (Dark)'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'바닐라, 초코, 단맛, 복합적, 좋은 균형감'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">10000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Dark'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'costarica_shb'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Costa Rica'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'코스타리카 산호세 따라주 SHB (Dark)'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'만다린, 비스킷, 시리얼, 볶은 아몬드, 메이플시럽'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">10000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Dark'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 4. SPECIAL / GESHA</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'panama_mascarada'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'special'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Panama'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'파나마 마스카라다 라 플루'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'쟈스민, 흰 꽃향기, 청사과, 버터 스카치'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">10000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">25000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'New'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'Special'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'panama_esmeralda'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'special'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Panama'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'파나마 에스메랄다 게샤 W'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'쟈스민, 베르가못, 레몬, 꿀(조청), 우아함'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">35000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Best'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'Premium'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'colombia_melon'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'special'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Colombia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'콜롬비아 안티오키아 엘 푸투로 메론 무산소 H'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'멜론, 수박바, 딸기 아이스크림, 사과쥬스, 치즈케이크'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">7000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">15000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Funky'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'colombia_gesha_n'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'special'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Colombia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'콜롬비아 부에사코 나리노 로스 앙헬레스 게샤 N'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'라벤더, 포도, 블랙베리, 레몬그라스, 사탕수수'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">8000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">20000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Gesha'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'colombia_pink_lactic'</span><span class="s8">,</span><span class="s4"> category</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'special'</span><span class="s8">,</span><span class="s4"> country</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'Colombia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'콜롬비아 산 아돌포 엘 디비소 핑크버번 락틱 W'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'딸기, 카라멜, 붉은 과일류, 라벤더, 사과, 고추씨'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">8000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">20000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Pink Bourbon'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'guatemala_gesha_anaerobic'</span><span class="s8">,</span><span class="s4"> category</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'special'</span><span class="s8">,</span><span class="s4"> country</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'Guatemala'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'과테말라 아카테낭고 핀카 라 솔레다드 게샤 무산소 W'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'포도, 스톤프룻, 홍차, 카라멜, 자스민'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">8000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">20000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Gesha'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'guatemala_gesha_honey'</span><span class="s8">,</span><span class="s4"> category</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'special'</span><span class="s8">,</span><span class="s4"> country</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'Guatemala'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'과테말라 아카테낭고 핀카 라 솔레다드 게샤 H'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'흑설탕, 라임, 홍차, 바닐라, 자스민'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">8000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">20000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Gesha'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'peru_gesha'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'special'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Peru'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'페루 라 팔레스티나 게샤 W'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'살구, 만다린, 얼그레이, 깔끔함'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">8000</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">20000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Gesha'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 5. REMAINING DAILY / OTHERS</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'ethiopia_guji_anaerobic'</span><span class="s8">,</span><span class="s4"> category</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'special'</span><span class="s8">,</span><span class="s4"> country</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'에티오피아 오로미아 서 구지 게샤 무산소 W'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'계피, 레드베리, 백포도, 블랙커런트, 젤리'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Anaerobic'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'ethiopia_guji_natural'</span><span class="s8">,</span><span class="s4"> category</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'daily'</span><span class="s8">,</span><span class="s4"> country</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 오로미아 서 구지 게샤 N'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'복숭아, 자몽, 적포도, 엘더베리꽃, 산딸기'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Natural'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_limu'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 리무 레사드 아바불구 N'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'복숭아, 블루베리, 크랜베리, 초콜릿, 꿀'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Natural'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_halo'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 예가체프 할로 베리티 W'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'오렌지, 사탕수수, 바닐라, 살구, 밝은 산미'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">13000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Washed'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_shakiso'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'에티오피아 시다모 구지 사키소 타데 N'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'카카오닙스, 베리류, 메론, 브라운슈가, 홍차'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Natural'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">             </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_jimma'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'에티오피아 오로미아 짐마 게라 투마테소 W'</span><span class="s8">,</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'오렌지, 자두, 우롱차, 시트러스'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Washed'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_bombee'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 시다마 벤사 봄베 N'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'흑설탕, 라임, 홍차, 바닐라, 자스민'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Natural'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'ethiopia_arbegona'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Ethiopia'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'에티오피아 시다마 아르베고나 N'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'포도, 아로니아, 블루베리, 초콜릿, 캐러멜'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">12000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Natural'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'brazil_grape'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Brazil'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'브라질 빈할 청포도 젤리'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'포도주스, 건포도, 청포도, 패션후르츠, 이중발효'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">13000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Unique'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'brazil_coconut'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Brazil'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'브라질 빈할 코코넛'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'코코넛, 헤이즐럿, 밝은 산미, 이중발효'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">13000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Unique'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>id</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'kenya_mugaga'</span><span class="s8">,</span><span class="s1"> category</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s8">,</span><span class="s1"> country</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'Kenya'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>name</span><span class="s8">:</span><span class="s1"> </span><span class="s9">'케냐 무가가 키에니 AA TOP W'</span><span class="s8">,</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>note</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'오렌지, 사탕수수, 바닐라, 살구, 밝은 산미'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>priceDrip</span><span class="s8">:</span><span class="s1"> </span><span class="s12">5500</span><span class="s8">,</span><span class="s1"> priceBean</span><span class="s8">:</span><span class="s1"> </span><span class="s12">13000</span><span class="s8">,</span><span class="s1"> tags</span><span class="s8">:</span><span class="s1"> </span><span class="s8">[</span><span class="s9">'Kenya'</span><span class="s8">]</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">];</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">// --- 국가별 정보 (색상 및 국기 이미지) ---</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> countryInfo </span><span class="s8">=</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Blend'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-stone-600 text-white border-stone-600'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'KakaoTalk_20211101_152531287_02.png'</span><span class="s4"> </span><span class="s13">// 업로드된 로고 이미지 경로</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Ethiopia'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-rose-100 text-rose-800 border-rose-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/et.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Colombia'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-orange-100 text-orange-800 border-orange-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/co.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Guatemala'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-blue-100 text-blue-800 border-blue-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/gt.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Brazil'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-green-100 text-green-800 border-green-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/br.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Panama'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-indigo-100 text-indigo-800 border-indigo-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/pa.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Kenya'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-red-100 text-red-800 border-red-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/ke.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Costa Rica'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-teal-100 text-teal-800 border-teal-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/cr.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Peru'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-amber-100 text-amber-800 border-amber-200'</span><span class="s8">,</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'https://flagcdn.com/w20/pe.png'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">},</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s9">'Default'</span><span class="s8">:</span><span class="s1"> </span><span class="s8">{</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>style</span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-gray-100 text-gray-800 border-gray-200'</span><span class="s8">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>flagUrl</span><span class="s8">:</span><span class="s1"> </span><span class="s9">''</span><span class="s1"> </span><span class="s13">// 기본값은 이미지 없음</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">};</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> grid </span><span class="s8">=</span><span class="s1"> document</span><span class="s8">.</span><span class="s1">getElementById</span><span class="s8">(</span><span class="s9">'menu-grid'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> btns </span><span class="s8">=</span><span class="s1"> document</span><span class="s8">.</span><span class="s1">querySelectorAll</span><span class="s8">(</span><span class="s9">'.filter-btn'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">let</span><span class="s1"> isAdminMode </span><span class="s8">=</span><span class="s1"> </span><span class="s11">false</span><span class="s8">;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">// 로컬 스토리지에서 품절 상태 불러오기</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">let</span><span class="s1"> soldOutItems </span><span class="s8">=</span><span class="s1"> </span><span class="s14">JSON</span><span class="s8">.</span><span class="s1">parse</span><span class="s8">(</span><span class="s1">localStorage</span><span class="s8">.</span><span class="s1">getItem</span><span class="s8">(</span><span class="s9">'raontree_soldout_v5'</span><span class="s8">))</span><span class="s1"> </span><span class="s8">||</span><span class="s1"> </span><span class="s8">[];</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">function</span><span class="s1"> formatPrice</span><span class="s8">(</span><span class="s1">price</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">return</span><span class="s1"> price</span><span class="s8">.</span><span class="s1">toLocaleString</span><span class="s8">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">function</span><span class="s1"> toggleAdminMode</span><span class="s8">()</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>isAdminMode </span><span class="s8">=</span><span class="s1"> </span><span class="s8">!</span><span class="s1">isAdminMode</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>document</span><span class="s8">.</span><span class="s1">body</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">toggle</span><span class="s8">(</span><span class="s9">'admin-mode'</span><span class="s8">,</span><span class="s1"> isAdminMode</span><span class="s8">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">const</span><span class="s1"> btn </span><span class="s8">=</span><span class="s1"> document</span><span class="s8">.</span><span class="s1">getElementById</span><span class="s8">(</span><span class="s9">'admin-btn'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">const</span><span class="s1"> notice </span><span class="s8">=</span><span class="s1"> document</span><span class="s8">.</span><span class="s1">getElementById</span><span class="s8">(</span><span class="s9">'admin-notice'</span><span class="s8">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s1"> </span><span class="s8">(</span><span class="s1">isAdminMode</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s4">classList</span><span class="s8">.</span><span class="s4">add</span><span class="s8">(</span><span class="s1">'bg-stone-800'</span><span class="s8">,</span><span class="s4"> </span><span class="s1">'text-white'</span><span class="s8">,</span><span class="s4"> </span><span class="s1">'border-transparent'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">remove</span><span class="s8">(</span><span class="s9">'text-stone-400'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s1">querySelector</span><span class="s8">(</span><span class="s9">'i'</span><span class="s8">).</span><span class="s1">setAttribute</span><span class="s8">(</span><span class="s9">'data-lucide'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'unlock'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>notice</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">remove</span><span class="s8">(</span><span class="s9">'hidden'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span><span class="s1"> </span><span class="s11">else</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s4">classList</span><span class="s8">.</span><span class="s4">remove</span><span class="s8">(</span><span class="s1">'bg-stone-800'</span><span class="s8">,</span><span class="s4"> </span><span class="s1">'text-white'</span><span class="s8">,</span><span class="s4"> </span><span class="s1">'border-transparent'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">add</span><span class="s8">(</span><span class="s9">'text-stone-400'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>btn</span><span class="s8">.</span><span class="s1">querySelector</span><span class="s8">(</span><span class="s9">'i'</span><span class="s8">).</span><span class="s1">setAttribute</span><span class="s8">(</span><span class="s9">'data-lucide'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'lock'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>notice</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">add</span><span class="s8">(</span><span class="s9">'hidden'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>lucide</span><span class="s8">.</span><span class="s1">createIcons</span><span class="s8">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>renderMenu</span><span class="s8">(</span><span class="s1">currentCategory</span><span class="s8">);</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">function</span><span class="s1"> toggleSoldOut</span><span class="s8">(</span><span class="s1">id</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">// 관리자 모드에서만 동작</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s1"> </span><span class="s8">(!</span><span class="s1">isAdminMode</span><span class="s8">)</span><span class="s1"> </span><span class="s11">return</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s1"> </span><span class="s8">(</span><span class="s1">soldOutItems</span><span class="s8">.</span><span class="s1">includes</span><span class="s8">(</span><span class="s1">id</span><span class="s8">))</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>soldOutItems </span><span class="s8">=</span><span class="s1"> soldOutItems</span><span class="s8">.</span><span class="s1">filter</span><span class="s8">(</span><span class="s1">item </span><span class="s8">=&gt;</span><span class="s1"> item </span><span class="s8">!==</span><span class="s1"> id</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span><span class="s1"> </span><span class="s11">else</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>soldOutItems</span><span class="s8">.</span><span class="s1">push</span><span class="s8">(</span><span class="s1">id</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>localStorage</span><span class="s8">.</span><span class="s1">setItem</span><span class="s8">(</span><span class="s9">'raontree_soldout_v5'</span><span class="s8">,</span><span class="s1"> </span><span class="s14">JSON</span><span class="s8">.</span><span class="s1">stringify</span><span class="s8">(</span><span class="s1">soldOutItems</span><span class="s8">));</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>renderMenu</span><span class="s8">(</span><span class="s1">currentCategory</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">let</span><span class="s1"> currentCategory </span><span class="s8">=</span><span class="s1"> </span><span class="s9">'all'</span><span class="s8">;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">function</span><span class="s1"> renderMenu</span><span class="s8">(</span><span class="s1">filterCategory</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>currentCategory </span><span class="s8">=</span><span class="s1"> filterCategory</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>grid</span><span class="s8">.</span><span class="s1">innerHTML </span><span class="s8">=</span><span class="s1"> </span><span class="s9">''</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s13">// 필터 버튼 스타일</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>btns</span><span class="s8">.</span><span class="s1">forEach</span><span class="s8">(</span><span class="s1">btn </span><span class="s8">=&gt;</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> btnType </span><span class="s8">=</span><span class="s1"> btn</span><span class="s8">.</span><span class="s1">getAttribute</span><span class="s8">(</span><span class="s9">'onclick'</span><span class="s8">).</span><span class="s1">match</span><span class="s8">(</span><span class="s15">/'([^']+)'/</span><span class="s8">)[</span><span class="s12">1</span><span class="s8">];</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> </span><span class="s8">(</span><span class="s1">btnType </span><span class="s8">===</span><span class="s1"> filterCategory</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">remove</span><span class="s8">(</span><span class="s9">'bg-white'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'text-stone-600'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'border'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">add</span><span class="s8">(</span><span class="s9">'bg-stone-800'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'text-white'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">}</span><span class="s1"> </span><span class="s11">else</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">add</span><span class="s8">(</span><span class="s9">'bg-white'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'text-stone-600'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'border'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>btn</span><span class="s8">.</span><span class="s1">classList</span><span class="s8">.</span><span class="s1">remove</span><span class="s8">(</span><span class="s9">'bg-stone-800'</span><span class="s8">,</span><span class="s1"> </span><span class="s9">'text-white'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">});</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">const</span><span class="s1"> filteredData </span><span class="s8">=</span><span class="s1"> filterCategory </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'all'</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">?</span><span class="s1"> menuData<span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">:</span><span class="s1"> menuData</span><span class="s8">.</span><span class="s1">filter</span><span class="s8">(</span><span class="s1">item </span><span class="s8">=&gt;</span><span class="s1"> item</span><span class="s8">.</span><span class="s1">category </span><span class="s8">===</span><span class="s1"> filterCategory </span><span class="s8">||</span><span class="s1"> </span><span class="s8">(</span><span class="s1">filterCategory </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'daily'</span><span class="s1"> </span><span class="s8">&amp;&amp;</span><span class="s1"> item</span><span class="s8">.</span><span class="s1">category </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'blend'</span><span class="s8">));</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>filteredData</span><span class="s8">.</span><span class="s1">forEach</span><span class="s8">(</span><span class="s1">item </span><span class="s8">=&gt;</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> isSoldOut </span><span class="s8">=</span><span class="s1"> soldOutItems</span><span class="s8">.</span><span class="s1">includes</span><span class="s8">(</span><span class="s1">item</span><span class="s8">.</span><span class="s1">id</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> soldOutClass </span><span class="s8">=</span><span class="s1"> isSoldOut </span><span class="s8">?</span><span class="s1"> </span><span class="s9">'sold-out'</span><span class="s1"> </span><span class="s8">:</span><span class="s1"> </span><span class="s9">''</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s13">// Tags HTML</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">let</span><span class="s1"> tagsHtml </span><span class="s8">=</span><span class="s1"> </span><span class="s9">''</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s8">(</span><span class="s1">item</span><span class="s8">.</span><span class="s1">tags</span><span class="s8">)</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>item</span><span class="s8">.</span><span class="s1">tags</span><span class="s8">.</span><span class="s1">forEach</span><span class="s8">(</span><span class="s1">tag </span><span class="s8">=&gt;</span><span class="s1"> </span><span class="s8">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">let</span><span class="s1"> tagClass </span><span class="s8">=</span><span class="s1"> </span><span class="s9">'text-stone-500 bg-stone-100'</span><span class="s8">;</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                        </span></span><span class="s11">if</span><span class="s8">(</span><span class="s4">tag </span><span class="s8">===</span><span class="s4"> </span><span class="s1">'Gesha'</span><span class="s4"> </span><span class="s8">||</span><span class="s4"> tag </span><span class="s8">===</span><span class="s4"> </span><span class="s1">'Premium'</span><span class="s8">)</span><span class="s4"> tagClass </span><span class="s8">=</span><span class="s4"> </span><span class="s1">'text-amber-700 bg-amber-50 border border-amber-100'</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">if</span><span class="s8">(</span><span class="s1">tag </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'Best'</span><span class="s1"> </span><span class="s8">||</span><span class="s1"> tag </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'New'</span><span class="s8">)</span><span class="s1"> tagClass </span><span class="s8">=</span><span class="s1"> </span><span class="s9">'text-red-600 bg-red-50 font-bold'</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">if</span><span class="s8">(</span><span class="s1">tag </span><span class="s8">===</span><span class="s1"> </span><span class="s9">'Decaf'</span><span class="s8">)</span><span class="s1"> tagClass </span><span class="s8">=</span><span class="s1"> </span><span class="s9">'text-green-700 bg-green-50'</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                        </span>tagsHtml </span><span class="s8">+=</span><span class="s4"> </span><span class="s1">`&lt;span class="text-[10px] px-2 py-0.5 rounded-full </span><span class="s8">${</span><span class="s4">tagClass</span><span class="s8">}</span><span class="s1"> mr-1"&gt;</span><span class="s8">${</span><span class="s4">tag</span><span class="s8">}</span><span class="s1">&lt;/span&gt;`</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s8">});</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">}</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Country Info (Style &amp; Flag)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> country </span><span class="s8">=</span><span class="s1"> countryInfo</span><span class="s8">[</span><span class="s1">item</span><span class="s8">.</span><span class="s1">country</span><span class="s8">]</span><span class="s1"> </span><span class="s8">||</span><span class="s1"> countryInfo</span><span class="s8">[</span><span class="s9">'Default'</span><span class="s8">];</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s4"> flagHtml </span><span class="s8">=</span><span class="s4"> country</span><span class="s8">.</span><span class="s4">flagUrl </span><span class="s8">?</span><span class="s4"> </span><span class="s1">`&lt;img src="</span><span class="s8">${</span><span class="s4">country</span><span class="s8">.</span><span class="s4">flagUrl</span><span class="s8">}</span><span class="s1">" alt="</span><span class="s8">${</span><span class="s4">item</span><span class="s8">.</span><span class="s4">country</span><span class="s8">}</span><span class="s1">" class="w-3 h-3 mr-1 inline-block" style="vertical-align: text-top;"&gt;`</span><span class="s4"> </span><span class="s8">:</span><span class="s4"> </span><span class="s1">''</span><span class="s8">;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// 관리자 모드용 버튼 HTML 생성</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> adminBtnHtml </span><span class="s8">=</span><span class="s1"> isAdminMode </span><span class="s8">?</span><span class="s1"> </span><span class="s9">`</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button onclick="event.stopPropagation(); toggleSoldOut('</span><span class="s8">${</span><span class="s4">item</span><span class="s8">.</span><span class="s4">id</span><span class="s8">}</span><span class="s1">')"<span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span>class="absolute top-2 right-2 z-20 px-2 py-1 text-[10px] font-bold rounded shadow-sm border transition-colors</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s8">${</span><span class="s4">isSoldOut<span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                            </span></span><span class="s8">?</span><span class="s4"> </span><span class="s1">'bg-red-500 text-white border-red-500 hover:bg-red-600'</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                            </span></span><span class="s8">:</span><span class="s4"> </span><span class="s1">'bg-white text-stone-500 border-stone-200 hover:bg-stone-50 hover:text-stone-800'</span><span class="s8">}</span><span class="s1">"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s8">${</span><span class="s4">isSoldOut </span><span class="s8">?</span><span class="s4"> </span><span class="s1">'품절 해제'</span><span class="s4"> </span><span class="s8">:</span><span class="s4"> </span><span class="s1">'품절 처리'</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span>`</span><span class="s4"> </span><span class="s8">:</span><span class="s4"> </span><span class="s1">''</span><span class="s8">;</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> card </span><span class="s8">=</span><span class="s1"> document</span><span class="s8">.</span><span class="s1">createElement</span><span class="s8">(</span><span class="s9">'div'</span><span class="s8">);</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// 관리자 모드일 때는 카드 전체 클릭 이벤트 제거 (버튼으로만 동작)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> cursorClass </span><span class="s8">=</span><span class="s1"> isAdminMode </span><span class="s8">?</span><span class="s1"> </span><span class="s9">''</span><span class="s1"> </span><span class="s8">:</span><span class="s1"> </span><span class="s9">''</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span>card</span><span class="s8">.</span><span class="s4">className </span><span class="s8">=</span><span class="s4"> </span><span class="s1">`relative bg-white rounded-xl p-5 shadow-sm border border-stone-100 transition-all </span><span class="s8">${</span><span class="s4">soldOutClass</span><span class="s8">}</span><span class="s1"> </span><span class="s8">${</span><span class="s4">cursorClass</span><span class="s8">}</span><span class="s1">`</span><span class="s8">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>card</span><span class="s8">.</span><span class="s1">innerHTML </span><span class="s8">=</span><span class="s1"> </span><span class="s9">`</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s8">${</span><span class="s4">adminBtnHtml</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex flex-col h-full justify-between"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="flex items-center mb-2"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="flex items-center text-[10px] font-bold px-2 py-0.5 rounded mr-2 border </span><span class="s8">${</span><span class="s4">country</span><span class="s8">.</span><span class="s4">style</span><span class="s8">}</span><span class="s1">"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                    </span></span><span class="s8">${</span><span class="s4">flagHtml</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                    </span></span><span class="s8">${</span><span class="s4">item</span><span class="s8">.</span><span class="s4">country</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/span&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="flex justify-between items-start mb-1"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;h3 class="font-bold text-stone-800 text-lg leading-snug break-keep pr-2"&gt;</span><span class="s8">${</span><span class="s4">item</span><span class="s8">.</span><span class="s4">name</span><span class="s8">}</span><span class="s1">&lt;/h3&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s8">${!</span><span class="s4">isAdminMode </span><span class="s8">&amp;&amp;</span><span class="s4"> isSoldOut </span><span class="s8">?</span><span class="s4"> </span><span class="s1">'&lt;span class="text-xs font-bold text-red-500 border border-red-500 px-1 rounded whitespace-nowrap"&gt;품절됨&lt;/span&gt;'</span><span class="s4"> </span><span class="s8">:</span><span class="s4"> </span><span class="s1">''</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-xs text-stone-500 mb-3 leading-relaxed"&gt;</span><span class="s8">${</span><span class="s4">item</span><span class="s8">.</span><span class="s4">note</span><span class="s8">}</span><span class="s1">&lt;/p&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="flex flex-wrap mb-4"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s8">${</span><span class="s4">tagsHtml</span><span class="s8">}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p8"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-between items-end border-t border-stone-100 pt-3 mt-1"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="text-center w-1/2 border-r border-stone-100 pr-2"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="block text-[10px] text-stone-400 mb-0.5"&gt;핸드드립&lt;/span&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="block font-bold text-stone-700 text-lg"&gt;</span><span class="s8">${</span><span class="s4">formatPrice</span><span class="s8">(</span><span class="s4">item</span><span class="s8">.</span><span class="s4">priceDrip</span><span class="s8">)}</span><span class="s1">&lt;/span&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="text-center w-1/2 pl-2"&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="block text-[10px] text-stone-400 mb-0.5"&gt;원두 (100g)&lt;/span&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="block font-bold text-stone-600 text-base"&gt;</span><span class="s8">${</span><span class="s4">formatPrice</span><span class="s8">(</span><span class="s4">item</span><span class="s8">.</span><span class="s4">priceBean</span><span class="s8">)}</span><span class="s1">&lt;/span&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span>`</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>grid</span><span class="s8">.</span><span class="s1">appendChild</span><span class="s8">(</span><span class="s1">card</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s8">(</span><span class="s1">window</span><span class="s8">.</span><span class="s1">lucide</span><span class="s8">)</span><span class="s1"> lucide</span><span class="s8">.</span><span class="s1">createIcons</span><span class="s8">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">}</span></p>
-<p class="p5"><span class="s7"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s13">// 초기 실행</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>renderMenu</span><span class="s8">(</span><span class="s9">'all'</span><span class="s8">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>lucide</span><span class="s8">.</span><span class="s1">createIcons</span><span class="s8">();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s13">// 전역 노출</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>window</span><span class="s8">.</span><span class="s1">filterMenu </span><span class="s8">=</span><span class="s1"> renderMenu</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>window</span><span class="s8">.</span><span class="s1">toggleAdminMode </span><span class="s8">=</span><span class="s1"> toggleAdminMode</span><span class="s8">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>window</span><span class="s8">.</span><span class="s1">toggleSoldOut </span><span class="s8">=</span><span class="s1"> toggleSoldOut</span><span class="s8">;</span></p>
-<p class="p1"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
+<body class="min-h-screen relative pb-24">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#fdfbf7]/95 backdrop-blur-sm border-b border-stone-200 shadow-sm transition-all duration-300">
+        <div class="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="cursor-pointer">
+                <h1 class="text-2xl font-bold text-stone-800 tracking-tight">Raon Tree</h1>
+                <p class="text-xs text-stone-500">Specialty Single Origin</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleAdminMode()" id="admin-btn" class="flex items-center px-3 py-1.5 rounded-full hover:bg-stone-100 transition text-stone-400 border border-transparent">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                    <span class="ml-1 text-xs">관리</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Category Filter -->
+        <nav class="max-w-3xl mx-auto px-4 pb-2">
+            <div class="flex space-x-2 overflow-x-auto hide-scrollbar py-2">
+                <button onclick="filterMenu('all')" class="filter-btn active px-4 py-2 rounded-full text-sm font-bold bg-stone-800 text-white whitespace-nowrap transition-all shadow-md">
+                    전체보기
+                </button>
+                <button onclick="filterMenu('special')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
+                    ✨ 스페셜/게샤
+                </button>
+                <button onclick="filterMenu('daily')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
+                    ☕ 데일리
+                </button>
+                <button onclick="filterMenu('decaf')" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white text-stone-600 border border-stone-200 whitespace-nowrap hover:bg-stone-100 transition-all">
+                    🌿 디카페인
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-4 py-6">
+        
+        <!-- Admin Notice -->
+        <div id="admin-notice" class="hidden mb-4 bg-stone-800 text-white px-4 py-3 rounded-lg text-sm flex justify-between items-center shadow-lg">
+            <span class="flex items-center"><i data-lucide="settings" class="w-4 h-4 mr-2"></i> 관리자 모드: 각 메뉴의 [품절] 버튼을 눌러 상태를 변경하세요.</span>
+            <button onclick="toggleAdminMode()" class="text-xs bg-white text-stone-800 px-2 py-1 rounded font-bold">종료</button>
+        </div>
+
+        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- JS Generated Content -->
+        </div>
+
+        <!-- Price Guide -->
+        <div class="mt-8 bg-stone-100 rounded-xl p-6 text-sm text-stone-600 leading-relaxed shadow-inner">
+            <h3 class="font-bold text-stone-800 mb-2 text-base flex items-center">
+                <i data-lucide="info" class="w-4 h-4 mr-2"></i> 이용 안내
+            </h3>
+            <ul class="space-y-2 list-disc list-inside text-xs sm:text-sm">
+                <li>모든 핸드드립은 <span class="font-bold text-stone-800">HOT / ICE 가격이 동일</span>합니다.</li>
+                <li>원두 구매 시 <span class="font-bold text-stone-800">500g (20%), 1kg (30%) 할인</span> 적용됩니다.</li>
+                <li>커피를 고르기 어려우시면 바리스타에게 편하게 문의해주세요.</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-10 text-stone-400 text-xs">
+        <p class="mb-2">Raon Tree Roastery</p>
+        <p class="text-[10px] opacity-70">Single Origin Line-up</p>
+    </footer>
+
+    <script>
+        // --- 데이터 정의 ---
+        const menuData = [
+            // 1. BLEND (Top Priority)
+            {
+                id: 'blend_purple', category: 'daily', country: 'Blend',
+                name: '라온트리 블랜드 퍼플', 
+                note: '과테말라, 에티오피아, 콜롬비아, 브라질 블렌딩',
+                priceDrip: 3300, priceBean: 5000, tags: ['House Blend']
+            },
+
+            // 2. DECAF (Second Priority)
+            {
+                id: 'decaf_sidamo', category: 'decaf', country: 'Ethiopia',
+                name: '에티오피아 시다모 디카페인 N', 
+                note: '민트, 보리, 레몬그라스, 오렌지, 포도',
+                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
+            },
+            {
+                id: 'decaf_brazil', category: 'decaf', country: 'Brazil',
+                name: '브라질 NY2 게르만 CO2 (Decaf)', 
+                note: '초콜릿, 부드러움, 균형감',
+                priceDrip: 4300, priceBean: 12000, tags: ['Decaf']
+            },
+
+            // 3. DARK / SAVORY (Moved here after Decaf)
+            {
+                id: 'colombia_popayan', category: 'daily', country: 'Colombia',
+                name: '콜롬비아 포파얀 클라쎄 (Dark)', 
+                note: '카라멜, 아몬드, 밀크초콜릿, 브라운 슈가, 묵직함',
+                priceDrip: 5000, priceBean: 10000, tags: ['Dark']
+            },
+            {
+                id: 'guatemala_waykan', category: 'daily', country: 'Guatemala',
+                name: '과테말라 우에우에케낭고 와이칸 (Dark)', 
+                note: '바닐라, 초코, 단맛, 복합적, 좋은 균형감',
+                priceDrip: 5000, priceBean: 10000, tags: ['Dark']
+            },
+            {
+                id: 'costarica_shb', category: 'daily', country: 'Costa Rica',
+                name: '코스타리카 산호세 따라주 SHB (Dark)', 
+                note: '만다린, 비스킷, 시리얼, 볶은 아몬드, 메이플시럽',
+                priceDrip: 5000, priceBean: 10000, tags: ['Dark']
+            },
+
+            // 4. SPECIAL / GESHA
+            {
+                id: 'panama_mascarada', category: 'special', country: 'Panama',
+                name: '파나마 마스카라다 라 플루', 
+                note: '쟈스민, 흰 꽃향기, 청사과, 버터 스카치',
+                priceDrip: 10000, priceBean: 25000, tags: ['New', 'Special']
+            },
+            {
+                id: 'panama_esmeralda', category: 'special', country: 'Panama',
+                name: '파나마 에스메랄다 게샤 W', 
+                note: '쟈스민, 베르가못, 레몬, 꿀(조청), 우아함',
+                priceDrip: 12000, priceBean: 35000, tags: ['Best', 'Premium']
+            },
+            {
+                id: 'colombia_melon', category: 'special', country: 'Colombia',
+                name: '콜롬비아 안티오키아 엘 푸투로 메론 무산소 H', 
+                note: '멜론, 수박바, 딸기 아이스크림, 사과쥬스, 치즈케이크',
+                priceDrip: 7000, priceBean: 15000, tags: ['Funky']
+            },
+            {
+                id: 'colombia_gesha_n', category: 'special', country: 'Colombia',
+                name: '콜롬비아 부에사코 나리노 로스 앙헬레스 게샤 N', 
+                note: '라벤더, 포도, 블랙베리, 레몬그라스, 사탕수수',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'colombia_pink_lactic', category: 'special', country: 'Colombia',
+                name: '콜롬비아 산 아돌포 엘 디비소 핑크버번 락틱 W', 
+                note: '딸기, 카라멜, 붉은 과일류, 라벤더, 사과, 고추씨',
+                priceDrip: 8000, priceBean: 20000, tags: ['Pink Bourbon']
+            },
+            {
+                id: 'guatemala_gesha_anaerobic', category: 'special', country: 'Guatemala',
+                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 무산소 W', 
+                note: '포도, 스톤프룻, 홍차, 카라멜, 자스민',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'guatemala_gesha_honey', category: 'special', country: 'Guatemala',
+                name: '과테말라 아카테낭고 핀카 라 솔레다드 게샤 H', 
+                note: '흑설탕, 라임, 홍차, 바닐라, 자스민',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+            {
+                id: 'peru_gesha', category: 'special', country: 'Peru',
+                name: '페루 라 팔레스티나 게샤 W', 
+                note: '살구, 만다린, 얼그레이, 깔끔함',
+                priceDrip: 8000, priceBean: 20000, tags: ['Gesha']
+            },
+
+            // 5. REMAINING DAILY / OTHERS
+            {
+                id: 'ethiopia_guji_anaerobic', category: 'special', country: 'Ethiopia',
+                name: '에티오피아 오로미아 서 구지 게샤 무산소 W', 
+                note: '계피, 레드베리, 백포도, 블랙커런트, 젤리',
+                priceDrip: 5500, priceBean: 12000, tags: ['Anaerobic']
+            },
+            {
+                id: 'ethiopia_guji_natural', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 오로미아 서 구지 게샤 N', 
+                note: '복숭아, 자몽, 적포도, 엘더베리꽃, 산딸기',
+                priceDrip: 5500, priceBean: 12000, tags: ['Natural']
+            },
+            {
+                id: 'ethiopia_limu', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 리무 레사드 아바불구 N', 
+                note: '복숭아, 블루베리, 크랜베리, 초콜릿, 꿀',
+                priceDrip: 5500, priceBean: 12000, tags: ['Natural']
+            },
+            {
+                id: 'ethiopia_halo', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 예가체프 할로 베리티 W', 
+                note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미',
+                priceDrip: 5500, priceBean: 13000, tags: ['Washed']
+            },
+            {
+                id: 'ethiopia_shakiso', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 시다모 구지 사키소 타데 N', 
+                note: '카카오닙스, 베리류, 메론, 브라운슈가, 홍차',
+                priceDrip: 5500, priceBean: 12000, tags: ['Natural']
+            },
+             {
+                id: 'ethiopia_jimma', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 오로미아 짐마 게라 투마테소 W', 
+                note: '오렌지, 자두, 우롱차, 시트러스',
+                priceDrip: 5500, priceBean: 12000, tags: ['Washed']
+            },
+            {
+                id: 'ethiopia_bombee', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 시다마 벤사 봄베 N', 
+                note: '흑설탕, 라임, 홍차, 바닐라, 자스민',
+                priceDrip: 5500, priceBean: 12000, tags: ['Natural']
+            },
+            {
+                id: 'ethiopia_arbegona', category: 'daily', country: 'Ethiopia',
+                name: '에티오피아 시다마 아르베고나 N', 
+                note: '포도, 아로니아, 블루베리, 초콜릿, 캐러멜',
+                priceDrip: 5500, priceBean: 12000, tags: ['Natural']
+            },
+            {
+                id: 'brazil_grape', category: 'daily', country: 'Brazil',
+                name: '브라질 빈할 청포도 젤리', 
+                note: '포도주스, 건포도, 청포도, 패션후르츠, 이중발효',
+                priceDrip: 5500, priceBean: 13000, tags: ['Unique']
+            },
+            {
+                id: 'brazil_coconut', category: 'daily', country: 'Brazil',
+                name: '브라질 빈할 코코넛', 
+                note: '코코넛, 헤이즐럿, 밝은 산미, 이중발효',
+                priceDrip: 5500, priceBean: 13000, tags: ['Unique']
+            },
+            {
+                id: 'kenya_mugaga', category: 'daily', country: 'Kenya',
+                name: '케냐 무가가 키에니 AA TOP W', 
+                note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미',
+                priceDrip: 5500, priceBean: 13000, tags: ['Kenya']
+            }
+        ];
+
+        // --- 국가별 정보 (색상 및 국기 이미지) ---
+        const countryInfo = {
+            'Blend': { 
+                style: 'bg-stone-600 text-white border-stone-600',
+                flagUrl: 'KakaoTalk_20211101_152531287_02.png' // 업로드된 로고 이미지 경로
+            },
+            'Ethiopia': { 
+                style: 'bg-rose-100 text-rose-800 border-rose-200',
+                flagUrl: 'https://flagcdn.com/w20/et.png'
+            },
+            'Colombia': { 
+                style: 'bg-orange-100 text-orange-800 border-orange-200',
+                flagUrl: 'https://flagcdn.com/w20/co.png'
+            },
+            'Guatemala': { 
+                style: 'bg-blue-100 text-blue-800 border-blue-200',
+                flagUrl: 'https://flagcdn.com/w20/gt.png'
+            },
+            'Brazil': { 
+                style: 'bg-green-100 text-green-800 border-green-200',
+                flagUrl: 'https://flagcdn.com/w20/br.png'
+            },
+            'Panama': { 
+                style: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+                flagUrl: 'https://flagcdn.com/w20/pa.png'
+            },
+            'Kenya': { 
+                style: 'bg-red-100 text-red-800 border-red-200',
+                flagUrl: 'https://flagcdn.com/w20/ke.png'
+            },
+            'Costa Rica': { 
+                style: 'bg-teal-100 text-teal-800 border-teal-200',
+                flagUrl: 'https://flagcdn.com/w20/cr.png'
+            },
+            'Peru': { 
+                style: 'bg-amber-100 text-amber-800 border-amber-200',
+                flagUrl: 'https://flagcdn.com/w20/pe.png'
+            },
+            'Default': { 
+                style: 'bg-gray-100 text-gray-800 border-gray-200',
+                flagUrl: '' // 기본값은 이미지 없음
+            }
+        };
+
+        const grid = document.getElementById('menu-grid');
+        const btns = document.querySelectorAll('.filter-btn');
+        let isAdminMode = false;
+
+        // 로컬 스토리지에서 품절 상태 불러오기
+        let soldOutItems = JSON.parse(localStorage.getItem('raontree_soldout_v5')) || [];
+
+        function formatPrice(price) {
+            return price.toLocaleString();
+        }
+
+        function toggleAdminMode() {
+            isAdminMode = !isAdminMode;
+            document.body.classList.toggle('admin-mode', isAdminMode);
+            
+            const btn = document.getElementById('admin-btn');
+            const notice = document.getElementById('admin-notice');
+            
+            if (isAdminMode) {
+                btn.classList.add('bg-stone-800', 'text-white', 'border-transparent');
+                btn.classList.remove('text-stone-400');
+                btn.querySelector('i').setAttribute('data-lucide', 'unlock');
+                notice.classList.remove('hidden');
+            } else {
+                btn.classList.remove('bg-stone-800', 'text-white', 'border-transparent');
+                btn.classList.add('text-stone-400');
+                btn.querySelector('i').setAttribute('data-lucide', 'lock');
+                notice.classList.add('hidden');
+            }
+            lucide.createIcons();
+            renderMenu(currentCategory); 
+        }
+
+        function toggleSoldOut(id) {
+            // 관리자 모드에서만 동작
+            if (!isAdminMode) return;
+            
+            if (soldOutItems.includes(id)) {
+                soldOutItems = soldOutItems.filter(item => item !== id);
+            } else {
+                soldOutItems.push(id);
+            }
+            localStorage.setItem('raontree_soldout_v5', JSON.stringify(soldOutItems));
+            renderMenu(currentCategory);
+        }
+
+        let currentCategory = 'all';
+
+        function renderMenu(filterCategory) {
+            currentCategory = filterCategory;
+            grid.innerHTML = '';
+            
+            // 필터 버튼 스타일
+            btns.forEach(btn => {
+                const btnType = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                if (btnType === filterCategory) {
+                    btn.classList.remove('bg-white', 'text-stone-600', 'border');
+                    btn.classList.add('bg-stone-800', 'text-white');
+                } else {
+                    btn.classList.add('bg-white', 'text-stone-600', 'border');
+                    btn.classList.remove('bg-stone-800', 'text-white');
+                }
+            });
+
+            const filteredData = filterCategory === 'all' 
+                ? menuData 
+                : menuData.filter(item => item.category === filterCategory || (filterCategory === 'daily' && item.category === 'blend'));
+
+            filteredData.forEach(item => {
+                const isSoldOut = soldOutItems.includes(item.id);
+                const soldOutClass = isSoldOut ? 'sold-out' : '';
+                
+                // Tags HTML
+                let tagsHtml = '';
+                if(item.tags) {
+                    item.tags.forEach(tag => {
+                        let tagClass = 'text-stone-500 bg-stone-100';
+                        if(tag === 'Gesha' || tag === 'Premium') tagClass = 'text-amber-700 bg-amber-50 border border-amber-100';
+                        if(tag === 'Best' || tag === 'New') tagClass = 'text-red-600 bg-red-50 font-bold';
+                        if(tag === 'Decaf') tagClass = 'text-green-700 bg-green-50';
+                        
+                        tagsHtml += `<span class="text-[10px] px-2 py-0.5 rounded-full ${tagClass} mr-1">${tag}</span>`;
+                    });
+                }
+
+                // Country Info (Style & Flag)
+                const country = countryInfo[item.country] || countryInfo['Default'];
+                const flagHtml = country.flagUrl ? `<img src="${country.flagUrl}" alt="${item.country}" class="w-3 h-3 mr-1 inline-block" style="vertical-align: text-top;">` : '';
+
+                // 관리자 모드용 버튼 HTML 생성
+                const adminBtnHtml = isAdminMode ? `
+                    <button onclick="event.stopPropagation(); toggleSoldOut('${item.id}')" 
+                        class="absolute top-2 right-2 z-20 px-2 py-1 text-[10px] font-bold rounded shadow-sm border transition-colors
+                        ${isSoldOut 
+                            ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' 
+                            : 'bg-white text-stone-500 border-stone-200 hover:bg-stone-50 hover:text-stone-800'}">
+                        ${isSoldOut ? '품절 해제' : '품절 처리'}
+                    </button>
+                ` : '';
+
+                const card = document.createElement('div');
+                // 관리자 모드일 때는 카드 전체 클릭 이벤트 제거 (버튼으로만 동작)
+                const cursorClass = isAdminMode ? '' : '';
+                
+                card.className = `relative bg-white rounded-xl p-5 shadow-sm border border-stone-100 transition-all ${soldOutClass} ${cursorClass}`;
+                
+                card.innerHTML = `
+                    ${adminBtnHtml}
+                    <div class="flex flex-col h-full justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <span class="flex items-center text-[10px] font-bold px-2 py-0.5 rounded mr-2 border ${country.style}">
+                                    ${flagHtml}
+                                    ${item.country}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-stone-800 text-lg leading-snug break-keep pr-2">${item.name}</h3>
+                                ${!isAdminMode && isSoldOut ? '<span class="text-xs font-bold text-red-500 border border-red-500 px-1 rounded whitespace-nowrap">품절됨</span>' : ''}
+                            </div>
+                            <p class="text-xs text-stone-500 mb-3 leading-relaxed">${item.note}</p>
+                            <div class="flex flex-wrap mb-4">
+                                ${tagsHtml}
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-end border-t border-stone-100 pt-3 mt-1">
+                            <div class="text-center w-1/2 border-r border-stone-100 pr-2">
+                                <span class="block text-[10px] text-stone-400 mb-0.5">핸드드립</span>
+                                <span class="block font-bold text-stone-700 text-lg">${formatPrice(item.priceDrip)}</span>
+                            </div>
+                            <div class="text-center w-1/2 pl-2">
+                                <span class="block text-[10px] text-stone-400 mb-0.5">원두 (100g)</span>
+                                <span class="block font-bold text-stone-600 text-base">${formatPrice(item.priceBean)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            if(window.lucide) lucide.createIcons();
+        }
+
+        // 초기 실행
+        renderMenu('all');
+        lucide.createIcons();
+        
+        // 전역 노출
+        window.filterMenu = renderMenu;
+        window.toggleAdminMode = toggleAdminMode;
+        window.toggleSoldOut = toggleSoldOut;
+    </script>
 </body>
 </html>
