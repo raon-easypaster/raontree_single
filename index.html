@@ -219,26 +219,26 @@
 
         // --- 메뉴 데이터 ---
         const menuData = [
-            // 1. DAILY (Blend & Others)
+            // 1. DAILY (Blend & Basic)
             { id: 'blend_purple', category: 'daily', country: 'Blend', name: '라온트리 블랜드 퍼플', note: '과테말라, 에티오피아, 콜롬비아, 브라질 블렌딩', priceDrip: 3300, priceBean: 5000, tags: ['House Blend'] },
             { id: 'colombia_popayan', category: 'daily', country: 'Colombia', name: '콜롬비아 포파얀 클라쎄 (Dark)', note: '카라멜, 아몬드, 밀크초콜릿, 브라운 슈가, 묵직함', priceDrip: 5000, priceBean: 10000, tags: ['Dark'] },
-            { id: 'guatemala_waykan', category: 'daily', country: 'Guatemala', name: '과테말라 우에우에케낭고 와이칸 (Dark)', note: '바닐라, 초코, 단맛, 복합적, 좋은 균형감', priceDrip: 5000, priceBean: 10000, tags: ['Dark'] },
+            { id: 'guatemala_waykan', category: 'daily', country: 'Guatemala', name: '과테말라 우에우에테낭고 와이칸 (Dark)', note: '바닐라, 초코, 단맛, 복합적, 좋은 균형감', priceDrip: 5000, priceBean: 10000, tags: ['Dark'] },
             { id: 'costarica_shb', category: 'daily', country: 'Costa Rica', name: '코스타리카 산호세 따라주 SHB (Dark)', note: '만다린, 비스킷, 시리얼, 볶은 아몬드, 메이플시럽', priceDrip: 5000, priceBean: 10000, tags: ['Dark'] },
-            { id: 'ethiopia_limu', category: 'daily', country: 'Ethiopia', name: '에티오피아 리무 레사드 아바불구 N', note: '복숭아, 블루베리, 크랜베리, 초콜릿, 꿀', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
-            { id: 'ethiopia_halo', category: 'daily', country: 'Ethiopia', name: '에티오피아 예가체프 할로 베리티 W', note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미', priceDrip: 5500, priceBean: 13000, tags: ['Washed'] },
-            { id: 'ethiopia_shakiso', category: 'daily', country: 'Ethiopia', name: '에티오피아 시다모 구지 사키소 타데 N', note: '카카오닙스, 베리류, 메론, 브라운슈가, 홍차', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
-            { id: 'ethiopia_jimma', category: 'daily', country: 'Ethiopia', name: '에티오피아 오로미아 짐마 게라 투마테소 W', note: '오렌지, 자두, 우롱차, 시트러스', priceDrip: 5500, priceBean: 12000, tags: ['Washed'] },
-            { id: 'ethiopia_bombee', category: 'daily', country: 'Ethiopia', name: '에티오피아 시다마 벤사 봄베 N', note: '흑설탕, 라임, 홍차, 바닐라, 자스민', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
-            { id: 'ethiopia_arbegona', category: 'daily', country: 'Ethiopia', name: '에티오피아 시다마 아르베고나 N', note: '포도, 아로니아, 블루베리, 초콜릿, 캐러멜', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
-            { id: 'brazil_grape', category: 'daily', country: 'Brazil', name: '브라질 빈할 청포도 젤리', note: '포도주스, 건포도, 청포도, 패션후르츠, 이중발효', priceDrip: 5500, priceBean: 13000, tags: ['Unique'] },
-            { id: 'brazil_coconut', category: 'daily', country: 'Brazil', name: '브라질 빈할 코코넛', note: '코코넛, 헤이즐럿, 밝은 산미, 이중발효', priceDrip: 5500, priceBean: 13000, tags: ['Unique'] },
-            { id: 'kenya_mugaga', category: 'daily', country: 'Kenya', name: '케냐 무가가 키에니 AA TOP W', note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미', priceDrip: 5500, priceBean: 13000, tags: ['Kenya'] },
-
+            
             // 2. DECAF
             { id: 'decaf_sidamo', category: 'decaf', country: 'Ethiopia', name: '에티오피아 시다모 디카페인 N', note: '민트, 보리, 레몬그라스, 오렌지, 포도', priceDrip: 4300, priceBean: 12000, tags: ['Decaf'] },
             { id: 'decaf_brazil', category: 'decaf', country: 'Brazil', name: '브라질 NY2 게르만 CO2 (Decaf)', note: '초콜릿, 부드러움, 균형감', priceDrip: 4300, priceBean: 12000, tags: ['Decaf'] },
 
-            // 3. SPECIAL
+            // 3. SPECIAL (Includes Ethiopia, Kenya, Brazil Special, etc.)
+            { id: 'ethiopia_limu', category: 'special', country: 'Ethiopia', name: '에티오피아 리무 레사드 아바불구 N', note: '복숭아, 블루베리, 크랜베리, 초콜릿, 꿀', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
+            { id: 'ethiopia_halo', category: 'special', country: 'Ethiopia', name: '에티오피아 예가체프 할로 베리티 W', note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미', priceDrip: 5500, priceBean: 13000, tags: ['Washed'] },
+            { id: 'ethiopia_shakiso', category: 'special', country: 'Ethiopia', name: '에티오피아 시다모 구지 사키소 타데 N', note: '카카오닙스, 베리류, 메론, 브라운슈가, 홍차', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
+            { id: 'ethiopia_jimma', category: 'special', country: 'Ethiopia', name: '에티오피아 오로미아 짐마 게라 투마테소 W', note: '오렌지, 자두, 우롱차, 시트러스', priceDrip: 5500, priceBean: 12000, tags: ['Washed'] },
+            { id: 'ethiopia_bombee', category: 'special', country: 'Ethiopia', name: '에티오피아 시다마 벤사 봄베 N', note: '흑설탕, 라임, 홍차, 바닐라, 자스민', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
+            { id: 'ethiopia_arbegona', category: 'special', country: 'Ethiopia', name: '에티오피아 시다마 아르베고나 N', note: '포도, 아로니아, 블루베리, 초콜릿, 캐러멜', priceDrip: 5500, priceBean: 12000, tags: ['Natural'] },
+            { id: 'brazil_grape', category: 'special', country: 'Brazil', name: '브라질 빈할 청포도 젤리', note: '포도주스, 건포도, 청포도, 패션후르츠, 이중발효', priceDrip: 5500, priceBean: 13000, tags: ['Unique'] },
+            { id: 'brazil_coconut', category: 'special', country: 'Brazil', name: '브라질 빈할 코코넛', note: '코코넛, 헤이즐럿, 밝은 산미, 이중발효', priceDrip: 5500, priceBean: 13000, tags: ['Unique'] },
+            { id: 'kenya_mugaga', category: 'special', country: 'Kenya', name: '케냐 무가가 키에니 AA TOP W', note: '오렌지, 사탕수수, 바닐라, 살구, 밝은 산미', priceDrip: 5500, priceBean: 13000, tags: ['Kenya'] },
             { id: 'colombia_melon', category: 'special', country: 'Colombia', name: '콜롬비아 안티오키아 엘 푸투로 메론 무산소 H', note: '멜론, 수박바, 딸기 아이스크림, 사과쥬스, 치즈케이크', priceDrip: 7000, priceBean: 15000, tags: ['Funky'] },
             { id: 'colombia_pink_lactic', category: 'special', country: 'Colombia', name: '콜롬비아 산 아돌포 엘 디비소 핑크버번 락틱 W', note: '딸기, 카라멜, 붉은 과일류, 라벤더, 사과, 고추씨', priceDrip: 8000, priceBean: 20000, tags: ['Pink Bourbon'] },
 
