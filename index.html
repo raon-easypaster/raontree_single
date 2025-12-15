@@ -1,544 +1,515 @@
-/**
- * Dhaka Mission Dashboard (다카 단기선교 대시보드)
- * * 2026년 방글라데시 다카 단기선교 일정을 관리하기 위한 인터랙티브 대시보드입니다.
- * 일정 관리, 지도 동선 확인, 예산 계산, 필수 준비물 체크리스트 기능을 제공합니다.
- * * [설치 및 실행 방법]
- * 1. React 프로젝트 생성 (Vite 권장):
- * npm create vite@latest dhaka-mission -- --template react
- * * 2. 필수 패키지 설치:
- * npm install lucide-react
- * * 3. Tailwind CSS 설정이 필요합니다.
- * * [파일 경로]
- * src/App.jsx (또는 프로젝트 구조에 맞춰 배치)
- */
-
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, MapPin, Users, Coffee, Plane, Wallet, BookOpen, Info, 
-  Clock, CheckCircle, CloudSun, Briefcase, ChevronRight, Home, 
-  CheckSquare, Navigation, Copy, ExternalLink, Church, RefreshCw, 
-  Sparkles, ShoppingBag, Ship 
-} from 'lucide-react';
-
-const DhakaDashboard = () => {
-  const [activeTab, setActiveTab] = useState('schedule'); // 기본 탭: 일정표
-  const [dDay, setDDay] = useState('');
-  const [mapUrl, setMapUrl] = useState('');
-  const [activeRouteId, setActiveRouteId] = useState('base'); // 현재 지도 표시 상태
-
-  // --------------------------------------------------------------------------
-  // 데이터 섹션
-  // --------------------------------------------------------------------------
-
-  // 주요 장소 데이터 (숙소, 교회, 카페)
-  const locations = [
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhaka Mission Dashboard</title>
+    
+    <!-- 1. Tailwind CSS (스타일링) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. React & ReactDOM (UI 라이브러리) -->
+    <script type="importmap">
     {
-      id: 'base',
-      type: '숙소',
-      name: "다카 선교 베이스",
-      korAddr: "굴샨 1 (South Avenue)",
-      address: "Level 6, Plot-12, Block - CWS South Avenue, Dhaka 1212",
-      googleQuery: "Level+6,+Plot-12,+Block+-+CWS+South+Avenue,+Dhaka+1212",
-      icon: <Home className="w-5 h-5 text-blue-600" />
-    },
-    {
-      id: 'church',
-      type: '교회',
-      name: "선교 센터 (예배처)",
-      korAddr: "케말 아타튀르크 대로",
-      address: "44 Kemal Ataturk Ave, Dhaka 1213",
-      googleQuery: "44+Kemal+Ataturk+Ave,+Dhaka+1213",
-      icon: <Church className="w-5 h-5 text-indigo-600" />
-    },
-    {
-      id: 'cafe',
-      type: '카페',
-      name: "커피 교육 장소",
-      korAddr: "펠라니 대로 (Felani Ave)",
-      address: "51 Felani Ave, Dhaka 1212",
-      googleQuery: "51+Felani+Ave,+Dhaka+1212",
-      icon: <Coffee className="w-5 h-5 text-brown-600" />
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.344.0"
+        }
     }
-  ];
+    </script>
+    
+    <!-- 3. Babel (브라우저에서 JSX 실행) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* 스크롤바 숨기기 (선택사항) */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* 애니메이션 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
 
-  // 주요 경로 데이터
-  const routes = [
-    { 
-        id: 0,
-        name: "숙소 ↔ 교회 (예배/사역)", 
-        origin: locations[0].googleQuery, 
-        dest: locations[1].googleQuery, 
-        icon: "⛪", 
-        desc: "금요일 예배 및 사역 이동" 
-    },
-    { 
-        id: 1,
-        name: "숙소 ↔ 카페 (커피교육)", 
-        origin: locations[0].googleQuery, 
-        dest: locations[2].googleQuery, 
-        icon: "☕", 
-        desc: "토~월요일 교육 이동" 
-    },
-    { 
-        id: 2,
-        name: "숙소 ↔ 하티르질 호수 (관광)", 
-        origin: locations[0].googleQuery, 
-        dest: "Hatirjheel,+Dhaka", 
-        icon: "🚤", 
-        desc: "일요일 오후 호수 산책/보트" 
-    },
-    { 
-        id: 3,
-        name: "숙소 ↔ 아롱 (쇼핑)", 
-        origin: locations[0].googleQuery, 
-        dest: "Aarong+Gulshan,+Dhaka", 
-        icon: "🛍️", 
-        desc: "월요일 오후 기념품 쇼핑 (굴샨점)" 
-    },
-    { 
-        id: 4,
-        name: "숙소 ↔ 핑크궁전 (올드다카)", 
-        origin: locations[0].googleQuery, 
-        dest: "Ahsan+Manzil+Museum,+Dhaka", 
-        icon: "🏰", 
-        desc: "화요일 역사 탐방 이동" 
-    },
-    { 
-        id: 5,
-        name: "공항 → 숙소 (도착)", 
-        origin: "Hazrat+Shahjalal+International+Airport", 
-        dest: locations[0].googleQuery, 
-        icon: "🛬", 
-        desc: "입국 시 이동 (약 40분~1시간)" 
-    },
-  ];
+    <!-- 4. React 컴포넌트 코드 -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            Calendar, MapPin, Users, Coffee, Plane, Wallet, BookOpen, Info, 
+            Clock, CheckCircle, CloudSun, Briefcase, ChevronRight, Home, 
+            CheckSquare, Navigation, Copy, ExternalLink, Church, RefreshCw, 
+            Sparkles, ShoppingBag, Ship 
+        } from 'lucide-react';
 
-  // 일정 데이터
-  const scheduleData = [
-    {
-      date: "3.26 (목)",
-      title: "출국 및 도착",
-      type: "travel",
-      items: ["인천 출발 🛫", "다카 도착 및 숙소 이동", "짐 풀기 및 휴식"]
-    },
-    {
-      date: "3.27 (금)",
-      title: "선교사 연합 사역",
-      type: "mission",
-      isKey: true,
-      items: ["선교사 연합 예배 (교회)", "AI 활용 교육 진행 💻", "저녁 교제"]
-    },
-    {
-      date: "3.28 (토)",
-      title: "커피 교육 1일차 & 시내 투어",
-      type: "mission",
-      isKey: true,
-      items: ["기초 이론 및 핸드드립 (~15:00)", "바나니/굴샨 시내 로컬 투어 🏙️", "현지 카페 탐방"]
-    },
-    {
-      date: "3.29 (일)",
-      title: "커피 교육 2일차 & 호수",
-      type: "mission",
-      isKey: true,
-      items: ["머신 운용 및 메뉴 실습 (~15:00)", "하티르질 호수 산책/보트 🚤", "팀 미팅"]
-    },
-    {
-      date: "3.30 (월)",
-      title: "교육 수료 & 쇼핑",
-      type: "mission",
-      isKey: true,
-      items: ["모의 카페/수료식 (~15:00)", "아롱(Aarong) 기념품 쇼핑 🛍️", "감사 파티"]
-    },
-    {
-      date: "3.31 (화)",
-      title: "올드 다카 & 마사지",
-      type: "free",
-      items: ["아샨 만질(핑크 궁전)", "재래시장 투어 (릭샤)", "전신 마사지 체험 💆‍♂️"]
-    },
-    {
-      date: "4.01 (수)",
-      title: "문화 탐방 & 마사지",
-      type: "free",
-      items: ["국회의사당 관람", "랄바흐 요새", "여행 피로 회복 마사지 💆‍♂️"]
-    },
-    {
-      date: "4.02 (목)",
-      title: "귀국",
-      type: "travel",
-      items: ["기념품 구입", "공항 이동", "인천행 비행기 탑승 ✈️"]
-    }
-  ];
+        const DhakaDashboard = () => {
+            const [activeTab, setActiveTab] = useState('schedule');
+            const [dDay, setDDay] = useState('');
+            const [mapUrl, setMapUrl] = useState('');
+            const [activeRouteId, setActiveRouteId] = useState('base');
 
-  // --------------------------------------------------------------------------
-  // Hooks & Handlers
-  // --------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
+            // 데이터 섹션
+            // --------------------------------------------------------------------------
 
-  // 초기 맵 URL 설정
-  useEffect(() => {
-    setMapUrl(`https://maps.google.com/maps?q=${locations[0].googleQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
-  }, []);
+            // 주요 장소 데이터
+            const locations = [
+                {
+                    id: 'base',
+                    type: '숙소',
+                    name: "다카 선교 베이스",
+                    korAddr: "굴샨 1 (South Avenue)",
+                    address: "Level 6, Plot-12, Block - CWS South Avenue, Dhaka 1212",
+                    googleQuery: "Level+6,+Plot-12,+Block+-+CWS+South+Avenue,+Dhaka+1212",
+                    icon: <Home className="w-5 h-5 text-blue-600" />
+                },
+                {
+                    id: 'church',
+                    type: '교회',
+                    name: "선교 센터 (예배처)",
+                    korAddr: "케말 아타튀르크 대로",
+                    address: "44 Kemal Ataturk Ave, Dhaka 1213",
+                    googleQuery: "44+Kemal+Ataturk+Ave,+Dhaka+1213",
+                    icon: <Church className="w-5 h-5 text-indigo-600" />
+                },
+                {
+                    id: 'cafe',
+                    type: '카페',
+                    name: "커피 교육 장소",
+                    korAddr: "펠라니 대로 (Felani Ave)",
+                    address: "51 Felani Ave, Dhaka 1212",
+                    googleQuery: "51+Felani+Ave,+Dhaka+1212",
+                    icon: <Coffee className="w-5 h-5 text-brown-600" />
+                }
+            ];
 
-  // D-Day 계산
-  useEffect(() => {
-    const today = new Date();
-    const tripDate = new Date('2026-03-26');
-    const diffTime = tripDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    setDDay(diffDays > 0 ? `D-${diffDays}` : diffDays === 0 ? 'D-Day' : `D+${Math.abs(diffDays)}`);
-  }, []);
+            // 주요 경로 데이터
+            const routes = [
+                { 
+                    id: 0,
+                    name: "숙소 ↔ 교회 (예배/사역)", 
+                    origin: locations[0].googleQuery, 
+                    dest: locations[1].googleQuery, 
+                    icon: "⛪", 
+                    desc: "금요일 예배 및 사역 이동" 
+                },
+                { 
+                    id: 1,
+                    name: "숙소 ↔ 카페 (커피교육)", 
+                    origin: locations[0].googleQuery, 
+                    dest: locations[2].googleQuery, 
+                    icon: "☕", 
+                    desc: "토~월요일 교육 이동" 
+                },
+                { 
+                    id: 2,
+                    name: "숙소 ↔ 하티르질 호수 (관광)", 
+                    origin: locations[0].googleQuery, 
+                    dest: "Hatirjheel,+Dhaka", 
+                    icon: "🚤", 
+                    desc: "일요일 오후 호수 산책/보트" 
+                },
+                { 
+                    id: 3,
+                    name: "숙소 ↔ 아롱 (쇼핑)", 
+                    origin: locations[0].googleQuery, 
+                    dest: "Aarong+Gulshan,+Dhaka", 
+                    icon: "🛍️", 
+                    desc: "월요일 오후 기념품 쇼핑 (굴샨점)" 
+                },
+                { 
+                    id: 4,
+                    name: "숙소 ↔ 핑크궁전 (올드다카)", 
+                    origin: locations[0].googleQuery, 
+                    dest: "Ahsan+Manzil+Museum,+Dhaka", 
+                    icon: "🏰", 
+                    desc: "화요일 역사 탐방 이동" 
+                },
+                { 
+                    id: 5,
+                    name: "공항 → 숙소 (도착)", 
+                    origin: "Hazrat+Shahjalal+International+Airport", 
+                    dest: locations[0].googleQuery, 
+                    icon: "🛬", 
+                    desc: "입국 시 이동 (약 40분~1시간)" 
+                },
+            ];
 
-  const handleCopyAddress = (text) => {
-    navigator.clipboard.writeText(text);
-    alert("주소가 복사되었습니다!");
-  };
+            // 일정 데이터
+            const scheduleData = [
+                {
+                    date: "3.26 (목)",
+                    title: "출국 및 도착",
+                    type: "travel",
+                    items: ["인천 출발 🛫", "다카 도착 및 숙소 이동", "짐 풀기 및 휴식"]
+                },
+                {
+                    date: "3.27 (금)",
+                    title: "선교사 연합 사역",
+                    type: "mission",
+                    isKey: true,
+                    items: ["선교사 연합 예배 (교회)", "AI 활용 교육 진행 💻", "저녁 교제"]
+                },
+                {
+                    date: "3.28 (토)",
+                    title: "커피 교육 1일차 & 시내 투어",
+                    type: "mission",
+                    isKey: true,
+                    items: ["기초 이론 및 핸드드립 (~15:00)", "바나니/굴샨 시내 로컬 투어 🏙️", "현지 카페 탐방"]
+                },
+                {
+                    date: "3.29 (일)",
+                    title: "커피 교육 2일차 & 호수",
+                    type: "mission",
+                    isKey: true,
+                    items: ["머신 운용 및 메뉴 실습 (~15:00)", "하티르질 호수 산책/보트 🚤", "팀 미팅"]
+                },
+                {
+                    date: "3.30 (월)",
+                    title: "교육 수료 & 쇼핑",
+                    type: "mission",
+                    isKey: true,
+                    items: ["모의 카페/수료식 (~15:00)", "아롱(Aarong) 기념품 쇼핑 🛍️", "감사 파티"]
+                },
+                {
+                    date: "3.31 (화)",
+                    title: "올드 다카 & 마사지",
+                    type: "free",
+                    items: ["아샨 만질(핑크 궁전)", "재래시장 투어 (릭샤)", "전신 마사지 체험 💆‍♂️"]
+                },
+                {
+                    date: "4.01 (수)",
+                    title: "문화 탐방 & 마사지",
+                    type: "free",
+                    items: ["국회의사당 관람", "랄바흐 요새", "여행 피로 회복 마사지 💆‍♂️"]
+                },
+                {
+                    date: "4.02 (목)",
+                    title: "귀국",
+                    type: "travel",
+                    items: ["기념품 구입", "공항 이동", "인천행 비행기 탑승 ✈️"]
+                }
+            ];
 
-  const openGoogleMapsApp = (origin, dest) => {
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
-    window.open(url, '_blank');
-  };
+            // Hooks & Handlers
+            useEffect(() => {
+                setMapUrl(`https://maps.google.com/maps?q=${locations[0].googleQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
+            }, []);
 
-  const showRouteOnMap = (routeId, origin, dest) => {
-    setActiveRouteId(routeId);
-    setMapUrl(`https://maps.google.com/maps?saddr=${origin}&daddr=${dest}&output=embed`);
-  };
+            useEffect(() => {
+                const today = new Date();
+                const tripDate = new Date('2026-03-26');
+                const diffTime = tripDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                setDDay(diffDays > 0 ? `D-${diffDays}` : diffDays === 0 ? 'D-Day' : `D+${Math.abs(diffDays)}`);
+            }, []);
 
-  const resetMapToBase = () => {
-    setActiveRouteId('base');
-    setMapUrl(`https://maps.google.com/maps?q=${locations[0].googleQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
-  };
+            const handleCopyAddress = (text) => {
+                navigator.clipboard.writeText(text);
+                alert("주소가 복사되었습니다!");
+            };
 
-  // --------------------------------------------------------------------------
-  // UI Render
-  // --------------------------------------------------------------------------
+            const openGoogleMapsApp = (origin, dest) => {
+                const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
+                window.open(url, '_blank');
+            };
 
-  return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-800 pb-20 md:pb-10">
-      
-      {/* Header Section (Blue Card Style) */}
-      <div className="bg-blue-600 rounded-b-[2rem] pt-8 pb-16 px-6 text-white shadow-lg relative overflow-hidden">
-        {/* Background Decoration */}
-        <Plane className="absolute top-10 right-6 text-blue-500 opacity-30 w-24 h-24 transform rotate-12" />
-        
-        <div className="relative z-10 max-w-md mx-auto">
-          <div className="inline-block bg-blue-500/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-3 border border-blue-400">
-            {dDay} Calculator
-          </div>
-          <h1 className="text-3xl font-bold mb-1 leading-tight">Dhaka Mission Trip</h1>
-          <p className="text-blue-100 text-sm mb-6">2026 다카 단기선교 프로젝트</p>
-          
-          <div className="bg-blue-700/50 backdrop-blur-md rounded-xl p-3 flex items-center">
-            <div className="bg-blue-500 p-2 rounded-full mr-3">
-              <Users className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-xs text-blue-200">참여 인원</p>
-              <p className="font-bold text-sm">총 3명 (인솔자 포함)</p>
-            </div>
-          </div>
-        </div>
-      </div>
+            const showRouteOnMap = (routeId, origin, dest) => {
+                setActiveRouteId(routeId);
+                setMapUrl(`https://maps.google.com/maps?saddr=${origin}&daddr=${dest}&output=embed`);
+            };
 
-      {/* Navigation Tabs (Floating) */}
-      <div className="max-w-md mx-auto px-4 -mt-8 relative z-20">
-        <div className="flex justify-between space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button 
-            onClick={() => setActiveTab('schedule')}
-            className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all
-              ${activeTab === 'schedule' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
-          >
-            <Calendar className="w-5 h-5 mb-1" />
-            일정표
-          </button>
-          <button 
-            onClick={() => setActiveTab('cityinfo')}
-            className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all
-              ${activeTab === 'cityinfo' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
-          >
-            <MapPin className="w-5 h-5 mb-1" />
-            지도/동선
-          </button>
-          <button 
-            onClick={() => setActiveTab('cost')}
-            className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all
-              ${activeTab === 'cost' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
-          >
-            <Wallet className="w-5 h-5 mb-1" />
-            예산
-          </button>
-          <button 
-             onClick={() => setActiveTab('check')}
-             className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all
-               ${activeTab === 'check' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
-           >
-             <CheckSquare className="w-5 h-5 mb-1" />
-             준비물
-           </button>
-        </div>
-      </div>
+            const resetMapToBase = () => {
+                setActiveRouteId('base');
+                setMapUrl(`https://maps.google.com/maps?q=${locations[0].googleQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
+            };
 
-      {/* Content Area */}
-      <main className="max-w-md mx-auto px-4 mt-4 space-y-4">
-        
-        {/* SCHEDULE TAB */}
-        {activeTab === 'schedule' && (
-          <div className="space-y-4 animate-fadeIn">
-             {/* Key Info Card */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-gray-800 mb-3 flex items-center">
-                <Briefcase className="w-5 h-5 mr-2 text-blue-600" />
-                주요 사역 및 관광
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center bg-blue-50 p-3 rounded-xl">
-                    <div className="bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded text-xs mr-3">3.27</div>
-                    <span className="text-sm font-medium text-gray-700">선교사 연합 AI 교육</span>
-                </div>
-                <div className="bg-emerald-50 p-3 rounded-xl">
-                    <div className="flex items-center mb-1">
-                        <div className="bg-emerald-100 text-emerald-600 font-bold px-2 py-1 rounded text-xs mr-3">3.28-30</div>
-                        <span className="text-sm font-medium text-gray-700">오전 커피 교육 (~15:00)</span>
+            // UI Render
+            return (
+                <div className="min-h-screen bg-gray-100 font-sans text-gray-800 pb-20 md:pb-10">
+                    {/* Header */}
+                    <div className="bg-blue-600 rounded-b-[2rem] pt-8 pb-16 px-6 text-white shadow-lg relative overflow-hidden">
+                        <Plane className="absolute top-10 right-6 text-blue-500 opacity-30 w-24 h-24 transform rotate-12" />
+                        <div className="relative z-10 max-w-md mx-auto">
+                            <div className="inline-block bg-blue-500/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-3 border border-blue-400">
+                                {dDay} Calculator
+                            </div>
+                            <h1 className="text-3xl font-bold mb-1 leading-tight">Dhaka Mission Trip</h1>
+                            <p className="text-blue-100 text-sm mb-6">2026 다카 단기선교 프로젝트</p>
+                            <div className="bg-blue-700/50 backdrop-blur-md rounded-xl p-3 flex items-center">
+                                <div className="bg-blue-500 p-2 rounded-full mr-3">
+                                    <Users className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-blue-200">참여 인원</p>
+                                    <p className="font-bold text-sm">총 3명 (인솔자 포함)</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="ml-[3.5rem] text-xs text-emerald-600 font-medium flex items-center">
-                        <CloudSun className="w-3 h-3 mr-1" /> 오후 로컬 관광 (쇼핑/호수 등)
-                    </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Daily Timeline */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
-              {scheduleData.map((day, idx) => (
-                <div key={idx} className={`p-4 ${idx !== scheduleData.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`font-bold text-sm px-2 py-0.5 rounded-md ${day.isKey ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {day.date}
-                    </span>
-                    {day.type === 'mission' && <span className="text-[10px] font-bold text-emerald-500">사역+관광</span>}
-                  </div>
-                  <h4 className="font-bold text-gray-800 mb-2">{day.title}</h4>
-                  <ul className="space-y-1">
-                    {day.items.map((item, i) => (
-                      <li key={i} className="text-xs text-gray-500 flex items-center">
-                        <span className="w-1 h-1 bg-gray-300 rounded-full mr-2"></span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* CITY INFO & MAP TAB */}
-        {activeTab === 'cityinfo' && (
-          <div className="space-y-4 animate-fadeIn">
-            
-            {/* Interactive Map Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="h-64 w-full bg-gray-100 relative">
-                     {/* Map Overlay Controls */}
-                     <div className="absolute top-3 right-3 z-10 flex space-x-2">
-                        {activeRouteId !== 'base' && (
+                    {/* Navigation Tabs */}
+                    <div className="max-w-md mx-auto px-4 -mt-8 relative z-20">
+                        <div className="flex justify-between space-x-2 overflow-x-auto pb-2 scrollbar-hide">
                             <button 
-                                onClick={resetMapToBase}
-                                className="bg-white text-gray-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center border border-gray-200"
+                                onClick={() => setActiveTab('schedule')}
+                                className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all ${activeTab === 'schedule' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
                             >
-                                <RefreshCw className="w-3 h-3 mr-1" />
-                                숙소 위치 보기
+                                <Calendar className="w-5 h-5 mb-1" />
+                                일정표
                             </button>
-                        )}
-                     </div>
-                     <iframe
-                        width="100%"
-                        height="100%"
-                        style={{border:0}}
-                        loading="lazy"
-                        allowFullScreen
-                        referrerPolicy="no-referrer-when-downgrade"
-                        src={mapUrl}
-                        title="Accommodation Map"
-                     ></iframe>
-                </div>
-                
-                <div className="p-4 border-t border-gray-100">
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-gray-800 flex items-center">
-                            <Navigation className="w-5 h-5 mr-2 text-emerald-600" />
-                            주요 동선 선택
-                        </h3>
-                        <span className="text-[10px] text-gray-400">클릭하여 지도에 표시</span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                        {routes.map((route) => (
-                            <div 
-                                key={route.id}
-                                className={`rounded-xl border transition-all cursor-pointer p-3
-                                    ${activeRouteId === route.id 
-                                        ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-200' 
-                                        : 'border-gray-100 hover:border-emerald-200 hover:bg-gray-50'}`}
+                            <button 
+                                onClick={() => setActiveTab('cityinfo')}
+                                className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all ${activeTab === 'cityinfo' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
                             >
-                                <div className="flex items-center justify-between">
-                                    <div 
-                                        className="flex items-center flex-1"
-                                        onClick={() => showRouteOnMap(route.id, route.origin, route.dest)}
-                                    >
-                                        <span className="text-xl mr-3">{route.icon}</span>
-                                        <div>
-                                            <span className={`block text-sm font-bold ${activeRouteId === route.id ? 'text-emerald-800' : 'text-gray-700'}`}>
-                                                {route.name}
-                                            </span>
-                                            <span className="block text-xs text-gray-500 mt-0.5">{route.desc}</span>
+                                <MapPin className="w-5 h-5 mb-1" />
+                                지도/동선
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('cost')}
+                                className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all ${activeTab === 'cost' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
+                            >
+                                <Wallet className="w-5 h-5 mb-1" />
+                                예산
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('check')}
+                                className={`flex-1 min-w-[80px] py-3 rounded-xl flex flex-col items-center justify-center shadow-sm text-xs font-bold transition-all ${activeTab === 'check' ? 'bg-white text-blue-600 ring-2 ring-blue-100' : 'bg-white/90 text-gray-400 hover:bg-white'}`}
+                            >
+                                <CheckSquare className="w-5 h-5 mb-1" />
+                                준비물
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <main className="max-w-md mx-auto px-4 mt-4 space-y-4">
+                        {/* SCHEDULE TAB */}
+                        {activeTab === 'schedule' && (
+                            <div className="space-y-4 animate-fadeIn">
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                                    <h3 className="font-bold text-gray-800 mb-3 flex items-center">
+                                        <Briefcase className="w-5 h-5 mr-2 text-blue-600" />
+                                        주요 사역 및 관광
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <div className="flex items-center bg-blue-50 p-3 rounded-xl">
+                                            <div className="bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded text-xs mr-3">3.27</div>
+                                            <span className="text-sm font-medium text-gray-700">선교사 연합 AI 교육</span>
+                                        </div>
+                                        <div className="bg-emerald-50 p-3 rounded-xl">
+                                            <div className="flex items-center mb-1">
+                                                <div className="bg-emerald-100 text-emerald-600 font-bold px-2 py-1 rounded text-xs mr-3">3.28-30</div>
+                                                <span className="text-sm font-medium text-gray-700">오전 커피 교육 (~15:00)</span>
+                                            </div>
+                                            <div className="ml-[3.5rem] text-xs text-emerald-600 font-medium flex items-center">
+                                                <CloudSun className="w-3 h-3 mr-1" /> 오후 로컬 관광 (쇼핑/호수 등)
+                                            </div>
                                         </div>
                                     </div>
-                                    <button 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            openGoogleMapsApp(route.origin, route.dest);
-                                        }}
-                                        className="ml-2 p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-full transition-colors"
-                                        title="앱에서 열기"
-                                    >
-                                        <ExternalLink className="w-4 h-4" />
-                                    </button>
+                                </div>
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
+                                    {scheduleData.map((day, idx) => (
+                                        <div key={idx} className={`p-4 ${idx !== scheduleData.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className={`font-bold text-sm px-2 py-0.5 rounded-md ${day.isKey ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                    {day.date}
+                                                </span>
+                                                {day.type === 'mission' && <span className="text-[10px] font-bold text-emerald-500">사역+관광</span>}
+                                            </div>
+                                            <h4 className="font-bold text-gray-800 mb-2">{day.title}</h4>
+                                            <ul className="space-y-1">
+                                                {day.items.map((item, i) => (
+                                                    <li key={i} className="text-xs text-gray-500 flex items-center">
+                                                        <span className="w-1 h-1 bg-gray-300 rounded-full mr-2"></span>
+                                                        {item}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                        )}
 
-            {/* Locations Cards */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-5 border-b border-gray-50">
-                    <h3 className="font-bold text-lg text-gray-800 flex items-center">
-                        <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-                        주요 장소 상세 정보
-                    </h3>
-                </div>
-                
-                <div className="divide-y divide-gray-50">
-                    {locations.map((loc, idx) => (
-                        <div key={idx} className="p-5">
-                            <div className="flex justify-between items-start mb-1">
-                                <div className="flex items-center">
-                                    {loc.icon}
-                                    <span className="font-bold text-gray-800 ml-2">{loc.name}</span>
+                        {/* CITY INFO & MAP TAB */}
+                        {activeTab === 'cityinfo' && (
+                            <div className="space-y-4 animate-fadeIn">
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="h-64 w-full bg-gray-100 relative">
+                                        <div className="absolute top-3 right-3 z-10 flex space-x-2">
+                                            {activeRouteId !== 'base' && (
+                                                <button onClick={resetMapToBase} className="bg-white text-gray-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center border border-gray-200">
+                                                    <RefreshCw className="w-3 h-3 mr-1" />
+                                                    숙소 위치 보기
+                                                </button>
+                                            )}
+                                        </div>
+                                        <iframe width="100%" height="100%" style={{border:0}} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" src={mapUrl} title="Accommodation Map"></iframe>
+                                    </div>
+                                    <div className="p-4 border-t border-gray-100">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="font-bold text-gray-800 flex items-center">
+                                                <Navigation className="w-5 h-5 mr-2 text-emerald-600" />
+                                                주요 동선 선택
+                                            </h3>
+                                            <span className="text-[10px] text-gray-400">클릭하여 지도에 표시</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {routes.map((route) => (
+                                                <div key={route.id} className={`rounded-xl border transition-all cursor-pointer p-3 ${activeRouteId === route.id ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-200' : 'border-gray-100 hover:border-emerald-200 hover:bg-gray-50'}`}>
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center flex-1" onClick={() => showRouteOnMap(route.id, route.origin, route.dest)}>
+                                                            <span className="text-xl mr-3">{route.icon}</span>
+                                                            <div>
+                                                                <span className={`block text-sm font-bold ${activeRouteId === route.id ? 'text-emerald-800' : 'text-gray-700'}`}>
+                                                                    {route.name}
+                                                                </span>
+                                                                <span className="block text-xs text-gray-500 mt-0.5">{route.desc}</span>
+                                                            </div>
+                                                        </div>
+                                                        <button onClick={(e) => { e.stopPropagation(); openGoogleMapsApp(route.origin, route.dest); }} className="ml-2 p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-full transition-colors" title="앱에서 열기">
+                                                            <ExternalLink className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span className={`text-[10px] px-2 py-1 rounded-full font-bold
-                                    ${loc.type === '숙소' ? 'bg-blue-100 text-blue-600' : 
-                                      loc.type === '교회' ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-700'}`}>
-                                    {loc.type}
-                                </span>
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="p-5 border-b border-gray-50">
+                                        <h3 className="font-bold text-lg text-gray-800 flex items-center">
+                                            <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+                                            주요 장소 상세 정보
+                                        </h3>
+                                    </div>
+                                    <div className="divide-y divide-gray-50">
+                                        {locations.map((loc, idx) => (
+                                            <div key={idx} className="p-5">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <div className="flex items-center">
+                                                        {loc.icon}
+                                                        <span className="font-bold text-gray-800 ml-2">{loc.name}</span>
+                                                    </div>
+                                                    <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${loc.type === '숙소' ? 'bg-blue-100 text-blue-600' : loc.type === '교회' ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-700'}`}>
+                                                        {loc.type}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-gray-500 mb-2 ml-7 font-medium">{loc.korAddr}</p>
+                                                <div className="ml-7">
+                                                    <p className="text-xs text-gray-400 mb-2 leading-relaxed break-all bg-gray-50 p-2 rounded border border-gray-100">
+                                                        {loc.address}
+                                                    </p>
+                                                    <button onClick={() => handleCopyAddress(loc.address)} className="flex items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+                                                        <Copy className="w-3 h-3 mr-1" /> 주소 복사
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
-                            <p className="text-xs text-gray-500 mb-2 ml-7 font-medium">{loc.korAddr}</p>
-                            <div className="ml-7">
-                                <p className="text-xs text-gray-400 mb-2 leading-relaxed break-all bg-gray-50 p-2 rounded border border-gray-100">
-                                    {loc.address}
-                                </p>
-                                <button 
-                                    onClick={() => handleCopyAddress(loc.address)}
-                                    className="flex items-center text-xs text-gray-500 hover:text-blue-600 transition-colors"
-                                >
-                                    <Copy className="w-3 h-3 mr-1" /> 주소 복사
-                                </button>
+                        )}
+
+                        {/* COST TAB */}
+                        {activeTab === 'cost' && (
+                            <div className="space-y-4 animate-fadeIn">
+                                <div className="bg-emerald-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                                    <Wallet size={100} className="absolute top-0 right-0 p-4 opacity-10" />
+                                    <p className="text-emerald-100 text-sm font-medium mb-1">1인 예상 비용 (항공권 제외)</p>
+                                    <h2 className="text-3xl font-bold mb-4">₩ 160,000</h2>
+                                    <div className="flex justify-between items-end border-t border-emerald-400/50 pt-4">
+                                        <span className="text-sm text-emerald-100">총 예산 (3인 기준)</span>
+                                        <span className="text-xl font-bold">₩ 480,000</span>
+                                    </div>
+                                </div>
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="px-5 py-4 border-b border-gray-100 flex items-center">
+                                        <BookOpen className="w-5 h-5 mr-2 text-gray-400" />
+                                        <h3 className="font-bold text-gray-800">세부 산출 내역 (현지 3인)</h3>
+                                    </div>
+                                    <div className="divide-y divide-gray-50">
+                                        <div className="p-5 flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-gray-800 text-sm">식비</p>
+                                                <p className="text-xs text-gray-400 mt-0.5">전 일정 현지식 및 특식</p>
+                                            </div>
+                                            <span className="font-bold text-emerald-600 text-sm">195,000원</span>
+                                        </div>
+                                        <div className="p-5 flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-gray-800 text-sm">교통비</p>
+                                                <p className="text-xs text-gray-400 mt-0.5">릭샤 및 우버 이동</p>
+                                            </div>
+                                            <span className="font-bold text-emerald-600 text-sm">120,000원</span>
+                                        </div>
+                                        <div className="p-5 flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-gray-800 text-sm">예비비</p>
+                                                <p className="text-xs text-gray-400 mt-0.5">간식 및 비상금</p>
+                                            </div>
+                                            <span className="font-bold text-emerald-600 text-sm">60,000원</span>
+                                        </div>
+                                        <div className="p-5 flex justify-between items-center bg-indigo-50/50">
+                                            <div className="flex items-center">
+                                                <Sparkles className="w-4 h-4 mr-2 text-indigo-500" />
+                                                <div>
+                                                    <p className="font-bold text-indigo-800 text-sm">마사지/휴식 (2회)</p>
+                                                    <p className="text-xs text-indigo-400 mt-0.5">피로 회복 (3인 x 2회)</p>
+                                                </div>
+                                            </div>
+                                            <span className="font-bold text-indigo-600 text-sm">105,000원</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-          </div>
-        )}
+                        )}
 
-        {/* COST TAB */}
-        {activeTab === 'cost' && (
-          <div className="space-y-4 animate-fadeIn">
-            {/* Total Budget Card (Green Style) */}
-            <div className="bg-emerald-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-4 opacity-10">
-                   <Wallet size={100} />
-               </div>
-               <p className="text-emerald-100 text-sm font-medium mb-1">1인 예상 비용 (항공권 제외)</p>
-               <h2 className="text-3xl font-bold mb-4">₩ 160,000</h2>
-               <div className="flex justify-between items-end border-t border-emerald-400/50 pt-4">
-                   <span className="text-sm text-emerald-100">총 예산 (3인 기준)</span>
-                   <span className="text-xl font-bold">₩ 480,000</span>
-               </div>
-            </div>
-
-            {/* Detailed Cost List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center">
-                    <BookOpen className="w-5 h-5 mr-2 text-gray-400" />
-                    <h3 className="font-bold text-gray-800">세부 산출 내역 (현지 3인)</h3>
-                </div>
-                <div className="divide-y divide-gray-50">
-                    <div className="p-5 flex justify-between items-center">
-                        <div>
-                            <p className="font-bold text-gray-800 text-sm">식비</p>
-                            <p className="text-xs text-gray-400 mt-0.5">전 일정 현지식 및 특식</p>
-                        </div>
-                        <span className="font-bold text-emerald-600 text-sm">195,000원</span>
-                    </div>
-                    <div className="p-5 flex justify-between items-center">
-                        <div>
-                            <p className="font-bold text-gray-800 text-sm">교통비</p>
-                            <p className="text-xs text-gray-400 mt-0.5">릭샤 및 우버 이동</p>
-                        </div>
-                        <span className="font-bold text-emerald-600 text-sm">120,000원</span>
-                    </div>
-                     <div className="p-5 flex justify-between items-center">
-                        <div>
-                            <p className="font-bold text-gray-800 text-sm">예비비</p>
-                            <p className="text-xs text-gray-400 mt-0.5">간식 및 비상금</p>
-                        </div>
-                        <span className="font-bold text-emerald-600 text-sm">60,000원</span>
-                    </div>
-                    <div className="p-5 flex justify-between items-center bg-indigo-50/50">
-                        <div className="flex items-center">
-                            <Sparkles className="w-4 h-4 mr-2 text-indigo-500" />
-                            <div>
-                                <p className="font-bold text-indigo-800 text-sm">마사지/휴식 (2회)</p>
-                                <p className="text-xs text-indigo-400 mt-0.5">피로 회복 (3인 x 2회)</p>
+                        {/* CHECKLIST TAB */}
+                        {activeTab === 'check' && (
+                            <div className="space-y-4 animate-fadeIn">
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="bg-indigo-50 px-5 py-4 border-b border-indigo-100">
+                                        <h3 className="font-bold text-indigo-800 flex items-center">
+                                            <CheckSquare className="w-5 h-5 mr-2" />
+                                            필수 준비물 리스트
+                                        </h3>
+                                    </div>
+                                    <div className="divide-y divide-gray-50 p-2">
+                                        {["비자 (도착비자 확인)", "모기 기피제 (필수)", "개인 물통 & 정수 알약", "얇은 긴팔 (보수적 의상)", "교육용 노트북/태블릿", "커피 드리퍼 세트", "상비약 (지사제 등)"].map((item, idx) => (
+                                            <label key={idx} className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                                <input type="checkbox" className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300 mr-3" />
+                                                <span className="text-sm text-gray-700">{item}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-sm text-orange-800">
+                                    <strong>⚠️ 주의사항:</strong> 식수는 반드시 밀봉된 생수만 드시고, 얼음이 들어간 음료는 피하세요.
+                                </div>
                             </div>
-                        </div>
-                        <span className="font-bold text-indigo-600 text-sm">105,000원</span>
-                    </div>
+                        )}
+                    </main>
                 </div>
-            </div>
-          </div>
-        )}
+            );
+        };
 
-        {/* CHECKLIST TAB */}
-        {activeTab === 'check' && (
-            <div className="space-y-4 animate-fadeIn">
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-indigo-50 px-5 py-4 border-b border-indigo-100">
-                        <h3 className="font-bold text-indigo-800 flex items-center">
-                            <CheckSquare className="w-5 h-5 mr-2" />
-                            필수 준비물 리스트
-                        </h3>
-                    </div>
-                    <div className="divide-y divide-gray-50 p-2">
-                        {["비자 (도착비자 확인)", "모기 기피제 (필수)", "개인 물통 & 정수 알약", "얇은 긴팔 (보수적 의상)", "교육용 노트북/태블릿", "커피 드리퍼 세트", "상비약 (지사제 등)"].map((item, idx) => (
-                            <label key={idx} className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <input type="checkbox" className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300 mr-3" />
-                                <span className="text-sm text-gray-700">{item}</span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-                
-                <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-sm text-orange-800">
-                    <strong>⚠️ 주의사항:</strong> 식수는 반드시 밀봉된 생수만 드시고, 얼음이 들어간 음료는 피하세요.
-                </div>
-            </div>
-        )}
-
-      </main>
-    </div>
-  );
-};
-
-export default DhakaDashboard;
+        const root = createRoot(document.getElementById('root'));
+        root.render(<DhakaDashboard />);
+    </script>
+</body>
+</html>
